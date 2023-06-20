@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-download_check_all_protocols <- function() {
+download_check_all_protocols <- function(gmail_account) {
 
 # DOWNLOAD AND CHECK -----------------------------------------------------
 
@@ -24,7 +24,8 @@ download_check_all_protocols <- function() {
       check_trialids = TRUE,
       check_new_task_tabs = TRUE,
       delete_nonexistent = TRUE,
-      show_all_messages = FALSE
+      show_all_messages = FALSE,
+      gmail_account = gmail_account
     )
 
 
