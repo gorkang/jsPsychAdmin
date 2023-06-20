@@ -1,0 +1,61 @@
+Package: jsPsychAdmin
+Title: Admin tasks for jsPsychR packages
+Version: 0.1
+Date: 2023-06-19
+Authors@R: c(person("Gorka", "Navarrete", email = "gorkang@gmail.com", role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7678-8656")))
+Description: Administrative tasks for jsPsychR packages.
+Maintainer: Gorka Navarrete <gorkang@gmail.com>
+License: MIT + file LICENSE
+URL: https://github.com/gorkang/jsPsychAdmin
+BugReports: https://github.com/gorkang/jsPsychAdmin/issues
+Depends: 
+    R (>= 4.2.0)
+Imports:
+    covr,
+    dbplyr,
+    DBI,
+    DT,
+    data.table,
+    furrr,
+    googlesheets4,
+    gt,
+    odbc,
+    sodium,
+    tictoc,
+    assertthat,
+    callr,
+    cli, 
+    dplyr,
+    dtplyr,
+    fs,
+    future,
+    future.callr,
+    glue,
+    here, 
+    jsPsychMaker,
+    jsPsychHelpeR,
+    magrittr, 
+    purrr, 
+    readr,
+    renv, 
+    rlang,
+    rmarkdown, 
+    rstudioapi,
+    stringr, 
+    stringi,
+    tibble, 
+    tidyr,
+    withr,
+    XML
+Suggests: 
+    knitr,
+    testthat (>= 3.0.0),
+    writexl, 
+    xml2
+Remotes:
+  gorkang/jsPsychMaker,
+  gorkang/jsPsychHelpeR
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Config/testthat/edition: 3
+Encoding: UTF-8
