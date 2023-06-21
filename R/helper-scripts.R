@@ -1,3 +1,8 @@
+# Test function to avoid warning about jsPsychMaker when Checking project
+TEST <- function() {
+  jsPsychMaker::check_NEW_tasks_Github()
+}
+
 
 #' DELETE_data_server
 #' Delete contents of data folder in the server: /.data/pid

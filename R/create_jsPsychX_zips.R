@@ -73,7 +73,7 @@ create_jsPsychMonkeys_zip <- function(add_renv_cache = FALSE) {
 #' create_jsPsychHelpeR_zip
 #' Create the jsPsychHelpeR_zip with a template of a full project, needed for the package to run
 #'
-#' @param add_renv_cache
+#' @param add_renv_cache Add the renv cache? Will add couple hundred MB. If TRUE, opening a new project is very fast: TRUE/FALSE
 #'
 #' @return
 #' @export

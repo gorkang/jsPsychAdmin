@@ -7,6 +7,8 @@
 #' - Check no missing info in Google doc of NEW tasks
 
 #'
+#' @param gmail_account Gmail account to connect to google sheets
+#'
 #' @return
 #' @export
 #'

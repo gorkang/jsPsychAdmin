@@ -13,6 +13,7 @@
 #' @param show_all_messages TRUE/FALSE
 #' @param helper_folder By default, the present folder
 #' @param CSCN_server_folder By default, ../CSCN-server/protocols/
+#' @param gmail_account Gmail account to connect to google sheets
 #'
 #' @return
 #' @export

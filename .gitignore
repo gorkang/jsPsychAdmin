@@ -4,6 +4,7 @@
 .Ruserdata
 .vault/.credentials
 .vault/SERVER_PATH.R
+.vault/data_encrypted.rds
 dev/
 TODO.Rmd
 docs

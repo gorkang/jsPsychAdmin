@@ -11,42 +11,26 @@ BugReports: https://github.com/gorkang/jsPsychAdmin/issues
 Depends: 
     R (>= 4.2.0)
 Imports:
-    covr,
-    dbplyr,
     DBI,
     DT,
-    data.table,
     furrr,
     googlesheets4,
     gt,
     odbc,
     sodium,
     tictoc,
-    assertthat,
     callr,
     cli, 
     dplyr,
-    dtplyr,
-    fs,
     future,
-    future.callr,
     glue,
     here, 
     jsPsychMaker,
     jsPsychHelpeR,
-    magrittr, 
     purrr, 
-    readr,
-    renv, 
-    rlang,
-    rmarkdown, 
     rstudioapi,
-    stringr, 
-    stringi,
     tibble, 
-    tidyr,
-    withr,
-    XML
+    tidyr
 Suggests: 
     knitr,
     testthat (>= 3.0.0),
@@ -54,7 +38,8 @@ Suggests:
     xml2
 Remotes:
   gorkang/jsPsychMaker,
-  gorkang/jsPsychHelpeR
+  gorkang/jsPsychHelpeR,
+  gorkang/jsPsychMonkeys
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 Config/testthat/edition: 3

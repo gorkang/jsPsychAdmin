@@ -139,8 +139,6 @@ add_pwd_for_pid_data <- function(pid) {
 
 encrypt_data <- function(mysupersecretpassword = NULL, data_unencrypted, output_name) {
 
-  # library(sodium)
-
   if (grepl("\\.|\\/", output_name)) cli::cli_abort("output_name must NOT be a file name. Use a simple string as: 'passwords'")
 
 
@@ -186,23 +184,21 @@ encrypt_data <- function(mysupersecretpassword = NULL, data_unencrypted, output_
 
 decrypt_data <- function(key_public, data_encrypted, mysupersecretpassword = NULL) {
 
-  library(sodium)
-
   if (grepl("\\.|\\/", key_public)) cli::cli_abort("key_public must NOT be a file name. Use readLines(), for example: readLines('{key_public}')")
   if (is.null(mysupersecretpassword)) mysupersecretpassword = rstudioapi::askForPassword("password to decrypt data")
 
   data_encrypted = readRDS(data_encrypted)
 
   #Private key
-  key_private <- sha256(charToRaw(mysupersecretpassword))
+  key_private <- sodium::sha256(charToRaw(mysupersecretpassword))
 
   #Check if private key provided is correct
-  if(paste(pubkey(key_private), collapse = " ") == key_public) {
+  if(paste(sodium::pubkey(key_private), collapse = " ") == key_public) {
 
     cli::cli_alert_success("Correct password")
 
     #Unencrypt data and make it available elsewhere
-    data_unencrypted <- unserialize(simple_decrypt(data_encrypted, key_private))
+    data_unencrypted <- unserialize(sodium::simple_decrypt(data_encrypted, key_private))
 
   } else {
 
