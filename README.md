@@ -21,7 +21,7 @@ First, install dependencies:
 Then, install the package:
 
 ```
-if (!require('renv')) utils::install.packages('renv'); remotes::install_github('gorkang/jsPsychAdmin')
+if (!require('remotes')) utils::install.packages('remotes'); remotes::install_github('gorkang/jsPsychAdmin')
 ```
 
 ---
