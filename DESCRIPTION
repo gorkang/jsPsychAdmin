@@ -27,6 +27,7 @@ Imports:
     here, 
     jsPsychMaker,
     jsPsychHelpeR,
+    jsPsychMonkeys,
     purrr, 
     rstudioapi,
     tibble, 
