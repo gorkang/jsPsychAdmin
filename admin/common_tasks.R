@@ -1,12 +1,17 @@
 
 # CHECK participants all protocols ----------------------------------------
 
+  # CHECKS number of completed, discarted and assigned participants for each protocol
+
   # Does NOT ask for password.
   # Uses the .credentials file + the public key to unlock the encrypted data_encrypted.rds
   jsPsychAdmin::check_status_participants_protocol()
+    # TODO: should also check how many files from how many tasks???
 
 
 # Clean up a DEV protocol -------------------------------------------------
+
+  # DANGER: will clean up MySQL DB and DELETE csv files
 
   # Clean up DB and csv files for a test/protocols_DEV/ protocol # Useful when testing
   # rstudioapi::navigateToFile(".vault/.credentials")
@@ -18,7 +23,7 @@
 
 # TODO: Lots of overlap between check_missing_prepare_TASK() and download_check_all_protocols()
 
-  #  Downloads all the protocols to CSCN-server
+  #  Downloads all the protocols to CSCN-server folder
   #  Then checks:
   # - for which ones we do not have preparation scripts
   # - for which ones we do not have googledoc details in
@@ -35,3 +40,14 @@
   # - Check trialid's are OK
   # - Check no missing info in Google doc of NEW tasks
   jsPsychAdmin::download_check_all_protocols(gmail_account = "gorkang@gmail.com")
+
+
+
+# Download/Upload specific protocol ---------------------------------------
+
+  # UPLOAD
+  jsPsychHelpeR::sync_server_local(direction = "local_to_server", local_folder = "protocols_DEV/999/", server_folder = "test/protocols_DEV/999/", only_test = TRUE, delete_nonexistent = FALSE)
+
+  # DOWNLOAD
+  jsPsychHelpeR::sync_server_local(direction = "server_to_local", server_folder = "test/protocols_DEV/999/", local_folder = "protocols_DEV/999/", only_test = TRUE, delete_nonexistent = FALSE)
+
