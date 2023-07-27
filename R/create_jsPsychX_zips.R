@@ -86,13 +86,14 @@ create_jsPsychHelpeR_zip <- function(add_renv_cache = FALSE) {
 
   if (add_renv_cache == TRUE) cli::cli_alert_info("Creating jsPsychHelpeR.zip. \n- `add_renv_cache = TRUE` will include the renv cache in jsPsychHelpeR.zip. \n- This will take ~ 30 seconds")
 
-  # List of core files for ext/templates/jsPsychHelpeR.zip
+
+  # List of core files for ext/templates/jsPsychHelpeR.zip -------------------
+
   root_files = c("jsPsychHelpeR.Rproj", "renv.lock", "run.R", "_targets_options.R", ".Rprofile", "README.md", "NEWS.md", "DESCRIPTION")
   other_important = c("renv/activate.R", ".vault/README.md", "inst/templates/_targets_TEMPLATE.R")
 
   # tests folder in templates. Will be moved to tests/ in run_initial_setup()
   tests_templates = list.files("inst/templates/tests", full.names = TRUE, recursive = TRUE)
-
 
   # R folder
   R_folder = c("R/list_input_files.R", "R/helper_functions_minimal.R", "R/helper_functions_extra.R", "R/run_initial_setup.R", "R/test_testthat.R")
@@ -101,11 +102,10 @@ create_jsPsychHelpeR_zip <- function(add_renv_cache = FALSE) {
   create = list.files("R", pattern = "^create", full.names = TRUE)
   read = list.files("R", pattern = "^read", full.names = TRUE)
 
-  # ALL test minus the ones testing the actual jsPsychHeleR package # Probably not needed, as non-package tests will be stored in inst/templates
+  # ALL test minus the ones testing the actual jsPsychHelpeR package # Probably not needed, as non-package tests will be stored in inst/templates
   # tests_temp = c(list.files("R", pattern = "^test", full.names = TRUE), "tests/testthat.R", list.files("tests/testthat/", full.names = TRUE))
   # tests = tests_temp[-grepl("test-0run_initial_setup.R", tests_temp)]
   # tests = c(list.files("R", pattern = "^test", full.names = TRUE), "tests/testthat.R") #list.files("tests/testthat/", full.names = TRUE)
-
 
   # Rmd
   reports = list.files("Rmd", full.names = TRUE)
@@ -120,7 +120,8 @@ create_jsPsychHelpeR_zip <- function(add_renv_cache = FALSE) {
   if (add_renv_cache == TRUE) all_files = c(all_files, renv_cache) # renv_lib should be symlinks, but it becomes a full copy TOO big for Github :(max 100MB)
 
 
-  # DELETE unnecesary files in the renv cache (doc, help, examples...). This saves a lot of space, but could be a source of issues
+  # DELETE unnecessary files in the renv cache (doc, help, examples...)
+    # This saves a lot of space, but could be a source of issues
   DELETE_files_renv =
     tibble::tibble(name = all_files) |>
     dplyr::mutate(folder = dirname(name)) |>

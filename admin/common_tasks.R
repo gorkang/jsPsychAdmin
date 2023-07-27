@@ -1,7 +1,7 @@
 
 # CHECK participants all protocols ----------------------------------------
 
-  # CHECKS number of completed, discarted and assigned participants for each protocol
+  # CHECKS number of completed, discarded and assigned participants for each protocol
 
   # Does NOT ask for password.
   # Uses the .credentials file + the public key to unlock the encrypted data_encrypted.rds
@@ -14,8 +14,8 @@
   # DANGER: will clean up MySQL DB and DELETE csv files
 
   # Clean up DB and csv files for a test/protocols_DEV/ protocol # Useful when testing
-  # rstudioapi::navigateToFile(".vault/.credentials")
-  jsPsychAdmin::clean_up_dev_protocol(protocol_id = "test/protocols_DEV/31") # Asks for server password
+  rstudioapi::navigateToFile(".vault/.credentials")
+  jsPsychAdmin::clean_up_dev_protocol(protocol_id = "test/protocols_DEV/22") # Asks for server password
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "999") # Asks for server password
 
 
