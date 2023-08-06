@@ -44,6 +44,12 @@ DELETE_data_server <- function(pid = NULL) {
       system(paste0('sshpass -p ', list_credentials$value$password, ' ssh ', list_credentials$value$user, '@', list_credentials$value$IP, ' ls ', list_credentials$value$main_FOLDER, folder_to_delete), intern = TRUE)
     )
 
+  # CHECK if folder .data exists
+  if (!is.null(attr(FILES_in_folder, "status"))) {
+    if (attr(FILES_in_folder, "status") == 2) cli::cli_abort("Folder '{folder_to_delete}' does NOT exist! Create it before continuing!")
+  }
+
+
   if (length(FILES_in_folder) == 0) {
 
     cli::cli_alert_info("NO files found in `{.pkg {folder_to_delete}}`")
