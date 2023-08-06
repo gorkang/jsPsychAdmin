@@ -9,10 +9,8 @@
 #' @examples
 clean_up_dev_protocol <- function(protocol_id) {
 
-  # protocol_id = "test/protocols_DEV/31"
+  # protocol_id = "test/protocols_DEV/999"
   # protocol_id = 999
-  # protocol_id = "999"
-  # protocol_id = "23"
 
 
   # CHECK IT IS A DEV PROTOCOL
@@ -22,10 +20,6 @@ clean_up_dev_protocol <- function(protocol_id) {
   # Sources and credentials
   pid = gsub("test/protocols_DEV/", "", protocol_id)
   cli::cli_h1("PROTOCOL {pid}")
-
-
-  # out <- utils::menu(c("yes", "NO"), title = glue::glue("Are you sure you want to {cli::col_red('DELETE')} MySQL tables and CSV results for pid {protocol_id}? This can NOT be UNDONE."))
-
 
   # 1) Limpiar la base de datos --------------------------------------------
 
