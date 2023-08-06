@@ -15,7 +15,7 @@
 
   # Clean up DB and csv files for a test/protocols_DEV/ protocol # Useful when testing
   rstudioapi::navigateToFile(".vault/.credentials")
-  jsPsychAdmin::clean_up_dev_protocol(protocol_id = "test/protocols_DEV/22") # Asks for server password
+  jsPsychAdmin::clean_up_dev_protocol(protocol_id = "test/protocols_DEV/999") # Asks for server password
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "999") # Asks for server password
 
 
@@ -50,4 +50,25 @@
 
   # DOWNLOAD
   jsPsychHelpeR::sync_server_local(direction = "server_to_local", server_folder = "test/protocols_DEV/999/", local_folder = "protocols_DEV/999/", only_test = TRUE, delete_nonexistent = FALSE)
+
+
+
+# MONKEYS -----------------------------------------------------------------
+
+
+## Connect to a running monkey -------------------------------------------
+
+  jsPsychMonkeys::reconnect_to_VNC(container_name = "monkey_90")
+
+
+# HELPER ------------------------------------------------------------------
+
+
+## Create new project ----------------------------------------
+
+  jsPsychHelpeR::run_initial_setup(pid = "test/protocols_DEV/37",
+                                   download_files = TRUE,
+                                   folder = "~/Downloads/jsPsychHelpeR37"
+  )
+
 
