@@ -7,7 +7,7 @@
 #' @export
 #'
 #' @examples
-clean_up_dev_protocol <- function(protocol_id, override_DEV_limitation = FALSE) {
+clean_up_dev_protocol <- function(protocol_id, override_DEV_limitation = FALSE, backup_datafiles_first = TRUE) {
 
   # protocol_id = "test/protocols_DEV/999"
   # protocol_id = 999
@@ -32,7 +32,18 @@ clean_up_dev_protocol <- function(protocol_id, override_DEV_limitation = FALSE) 
 
                                       )
                                     )
-      if (response_prompt != 1) cli::cli_abort("[protocol_id = {protocol_id}] ABORTED: Nothing will be done")
+      if (response_prompt != 1) {
+        cli::cli_abort("[protocol_id = {protocol_id}] ABORTED: Nothing will be done")
+      } else {
+
+        # Backup data files first? Only for non-dev protocols
+        if (backup_datafiles_first == TRUE) {
+          OUTPUT_folder = paste0("outputs/BACKUPS/", Sys.Date(), "/")
+          cli::cli_alert_info("Before deleting the data files, I will back them up in {OUTPUT_folder}{protocol_id}/{protocol_id}.zip")
+          jsPsychHelpeR::get_zip(pid = protocol_id, where = OUTPUT_folder, what = "data")
+        }
+
+      }
     }
   }
 
