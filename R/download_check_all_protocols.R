@@ -13,12 +13,12 @@
 #' @export
 #'
 #' @examples
-download_check_all_protocols <- function(gmail_account) {
+download_check_all_protocols <- function(gmail_account, dont_ask = FALSE) {
 
 # DOWNLOAD AND CHECK -----------------------------------------------------
 
   # Download protocols WITHOUT data
-  invisible(lapply(list.files("./R", full.names = TRUE, pattern = ".R$"), source))
+  # invisible(lapply(list.files("./R", full.names = TRUE, pattern = ".R$"), source))
 
   DF_missing =
     check_missing_prepare_TASK(
@@ -26,6 +26,7 @@ download_check_all_protocols <- function(gmail_account) {
       check_trialids = TRUE,
       check_new_task_tabs = TRUE,
       delete_nonexistent = TRUE,
+      dont_ask = dont_ask,
       show_all_messages = FALSE,
       gmail_account = gmail_account
     )

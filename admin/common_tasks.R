@@ -1,4 +1,26 @@
 
+# Install packages --------------------------------------------------------
+
+  renv::install(packages = c("gorkang/jsPsychHelpeR",
+                             "gorkang/jsPsychMonkeys",
+                             "gorkang/jsPsychMaker",
+                             "gorkang/jsPsychAdmin"))
+
+
+
+# Sync and check all protocols --------------------------------------------
+
+  jsPsychAdmin::download_check_all_protocols(gmail_account = "gorkang@gmail.com", dont_ask = TRUE)
+
+  jsPsychHelpeR::sync_server_local(server_folder = "",
+                                   local_folder = here::here(paste0("..", "/CSCN-server/protocols/")),
+                                   direction = "server_to_local",
+                                   only_test = FALSE,
+                                   exclude_csv = TRUE, # DO NOT INCLUDE DATA
+                                   delete_nonexistent = TRUE,
+                                   dont_ask = TRUE
+                                   )
+
 # CHECK participants all protocols ----------------------------------------
 
   # CHECKS number of completed, discarded and assigned participants for each protocol
@@ -17,6 +39,10 @@
   rstudioapi::navigateToFile(".vault/.credentials")
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "test/protocols_DEV/999") # Asks for server password
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "999") # Asks for server password
+
+  # For protocols in production after pilots. TO DISCARD EVERYTHING
+  jsPsychAdmin::clean_up_dev_protocol(protocol_id = "999", override_DEV_limitation = TRUE) # Asks for server password
+
 
 
 # Check missing scripts ---------------------------------------------------
@@ -69,6 +95,4 @@
   jsPsychHelpeR::run_initial_setup(pid = "test/protocols_DEV/37",
                                    download_files = TRUE,
                                    folder = "~/Downloads/jsPsychHelpeR37"
-  )
-
-
+                                   )

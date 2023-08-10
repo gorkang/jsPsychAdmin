@@ -23,6 +23,7 @@ check_missing_prepare_TASK <- function(sync_protocols = FALSE,
                                        check_trialids = FALSE,
                                        check_new_task_tabs = FALSE,
                                        delete_nonexistent = FALSE,
+                                       dont_ask = FALSE,
                                        show_all_messages = FALSE,
                                        helper_folder = ".",
                                        CSCN_server_folder = "..",
@@ -73,7 +74,8 @@ if (is.null(gmail_account)) cli::cli_abort("Enter your gmail account in 'gmail_a
                       direction = "server_to_local",
                       only_test = !sync_protocols, # we do !sync_protocols because the parameter is only_test (!)
                       exclude_csv = TRUE, # DO NOT INCLUDE DATA
-                      delete_nonexistent = delete_nonexistent# Delete files localy if they are NOT in server anymore
+                      delete_nonexistent = delete_nonexistent, # Delete files localy if they are NOT in server anymore
+                      dont_ask = dont_ask
                       )
   }
 
