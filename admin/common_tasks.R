@@ -1,10 +1,13 @@
+# TODO: show how many participants per condition!!! column "conditions" condA: 1 | condB: 2 | condC: 2
+  # jsPsychAdmin::check_status_participants_protocol()
+
 
 # Install packages --------------------------------------------------------
 
-  renv::install(packages = c("gorkang/jsPsychHelpeR",
-                             "gorkang/jsPsychMonkeys",
-                             "gorkang/jsPsychMaker",
-                             "gorkang/jsPsychAdmin"))
+  # renv::install(packages = c("gorkang/jsPsychHelpeR",
+  #                            "gorkang/jsPsychMonkeys",
+  #                            "gorkang/jsPsychMaker",
+  #                            "gorkang/jsPsychAdmin"))
 
 
 
@@ -28,7 +31,9 @@
   # Does NOT ask for password.
   # Uses the .credentials file + the public key to unlock the encrypted data_encrypted.rds
   jsPsychAdmin::check_status_participants_protocol()
-    # TODO: should also check how many files from how many tasks???
+  # TODO: should also check how many files from how many tasks???
+
+  # TODO: show how many participants per condition!!! column "conditions" condA: 1 | condB: 2 | condC: 2
 
 
 # Clean up a DEV protocol -------------------------------------------------
@@ -40,7 +45,7 @@
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "test/protocols_DEV/999") # Asks for server password
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "999") # Asks for server password
 
-  # For protocols in production after pilots. TO DISCARD EVERYTHING
+  # For protocols in production after pilots. TO DISCARD EVERYTHING. Creates a zip backup of files, just in case
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "999", override_DEV_limitation = TRUE) # Asks for server password
 
 

@@ -1,9 +1,10 @@
 # Sync and zip data folder of active protocols
 
-# CHECKS active folders: https://docs.google.com/spreadsheets/d/13xX8aGhKmfz8zVvNuCMDnS6L6Dy6T1NlA6nTOqZuErA/edit#gid=0
-# ZIPS to jsPsychR/SHARED-data/
-# Processes and zips DF_raw and DF_clean
-# Individual project folders will be shared with the IP for each project
+  # - syncs server content (minus data) to CSCN-server
+  # - CHECKS active folders: https://docs.google.com/spreadsheets/d/13xX8aGhKmfz8zVvNuCMDnS6L6Dy6T1NlA6nTOqZuErA/edit#gid=0
+  # - ZIPS to jsPsychR/SHARED-data/
+  # - Processes and zips DF_raw and DF_clean
+  # - Individual project folders will be shared with the IP for each project
 
 
 # If we need Google Drive authentication, run googlesheets4::gs4_auth("gorkang@gmail.com") in this file and in set_permissions_google_drive() in helper_functions_extra.R
@@ -35,8 +36,8 @@
 
 
 # TO TEST THIS WILL WORK WHEN RUN DAILY:
+# sudo run-parts --verbose /etc/cron.daily # Run all anacron daily jobs
 # system("cd /home/emrys/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/jsPsychAdmin/admin/ && Rscript sync_data_active_protocols.R")
-
 
 
 
@@ -195,11 +196,9 @@ cli::cli_h1("CHECK permissions")
     # CHECK if contacto looks like a single well formed email
     if (grepl(pattern = IS_EMAIL_regex, DF_permisos$contacto)) {
 
+      # TODO: Use safer/quieter version of functions and check if errors or warnings
       # Set permissions, only if not ADMIN and does not already have permissions
-      jsPsychHelpeR::set_permissions_google_drive(pid = DF_permisos$ID, email_IP = DF_permisos$contacto)
-
-      # cli::cli_alert_success("Asignados permisos sobre pid: {DF_permisos$ID} a {DF_permisos$contacto}")
-
+      jsPsychAdmin::set_permissions_google_drive(pid = DF_permisos$ID, email_IP = DF_permisos$contacto)
 
     } else {
       cli::cli_alert_danger("pid {PIDs[.x]}: {DF_permisos$contacto} does NOT look like a proper email")

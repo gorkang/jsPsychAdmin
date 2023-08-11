@@ -153,6 +153,11 @@ CHECK_secrets_OK <- function(path_to_secrets = "../../../../../", path_to_creden
 
 
 
+#' rename_jsPsych_canonical
+#'
+#' @param canonical_protocol_helper
+#'
+#' @return renamed files
 rename_jsPsych_canonical <- function(canonical_protocol_helper = "~/Downloads/jsPsychR_canonical") {
 
   # Rename all FILES so the filenames do not change
@@ -162,3 +167,66 @@ rename_jsPsych_canonical <- function(canonical_protocol_helper = "~/Downloads/js
 
 
 }
+
+
+
+
+
+#' set_permissions_google_drive
+#'
+#' Changes permission in a google drive folder
+#'
+#' @param pid pid of project
+#' @param email_IP email of Principal Researcher to give reading permissions to data in google drive
+#'
+#' @return NULL
+#' @export
+set_permissions_google_drive <- function(pid, email_IP) {
+
+  googledrive::drive_auth("gorkang@gmail.com")
+
+  ADMIN_emails = c("gorkang@gmail.com", "herman.valencia.13@sansano.usm.cl")
+
+  # If email_IP is not that of an admin
+  if (!email_IP %in% ADMIN_emails) {
+
+    # Get all folders in SHARED-data
+    SHARED_data_folder = googledrive::drive_ls(googledrive::as_id("1ZNiCILmpq_ZvjX0mkyhXM0M3IHJijJdL"), recursive = FALSE, type = "folder")
+
+    # Get id of folder == pid
+    ID = SHARED_data_folder |> dplyr::filter(name == pid) |> dplyr::pull(id)
+
+    # Present permissions
+    permissions_ID = ID |> googledrive::drive_reveal("permissions")
+    list_permissions = permissions_ID$drive_resource[[1]]$permissions
+    DF_permissions = 1:length(list_permissions) |>
+      purrr::map_df(~{
+        tibble::tibble(email = list_permissions[[.x]]$emailAddress,
+                       role = list_permissions[[.x]]$role)
+      })
+
+    # IF email_IP does not already have permissions
+    if (!email_IP %in% DF_permissions$email) {
+
+      # Change permissions for email_IP
+      ID |>
+        googledrive::drive_share(
+          role = "reader",
+          type = "user",
+          emailAddress = email_IP,
+          emailMessage = paste0("La carpeta de datos del proyecto ", pid, " ha sido compartida contigo. Si es un error o tienes alguna duda, avisa a gorkang@gmail.com")
+        )
+      cli::cli_alert_success("Granted View permissions to {email_IP}")
+
+      # email_IP already has permissions
+    } else {
+      cli::cli_alert_info("{email_IP} already has permissions")
+    }
+
+    # Admins
+  } else {
+    cli::cli_alert_info("{email_IP} is an ADMIN and already has permissions")
+  }
+
+}
+
