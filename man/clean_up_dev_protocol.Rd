@@ -4,7 +4,11 @@
 \alias{clean_up_dev_protocol}
 \title{Clean up server protocol}
 \usage{
-clean_up_dev_protocol(protocol_id)
+clean_up_dev_protocol(
+  protocol_id,
+  override_DEV_limitation = FALSE,
+  backup_datafiles_first = TRUE
+)
 }
 \arguments{
 \item{protocol_id}{Id for dev protocol (e.g. 'test/protocols_DEV/999')}

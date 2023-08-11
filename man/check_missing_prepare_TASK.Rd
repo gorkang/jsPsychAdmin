@@ -19,6 +19,7 @@ check_missing_prepare_TASK(
   check_trialids = FALSE,
   check_new_task_tabs = FALSE,
   delete_nonexistent = FALSE,
+  dont_ask = FALSE,
   show_all_messages = FALSE,
   helper_folder = ".",
   CSCN_server_folder = "..",

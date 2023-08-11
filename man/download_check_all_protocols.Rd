@@ -12,7 +12,7 @@ Then, will CHECK:
 \item Check no missing info in Google doc of NEW tasks
 }}
 \usage{
-download_check_all_protocols(gmail_account)
+download_check_all_protocols(gmail_account, dont_ask = FALSE)
 }
 \arguments{
 \item{gmail_account}{Gmail account to connect to google sheets}
