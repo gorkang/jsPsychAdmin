@@ -36,7 +36,8 @@
 
 
 # TO TEST THIS WILL WORK WHEN RUN DAILY:
-# sudo run-parts --verbose /etc/cron.daily # Run all anacron daily jobs
+# sudo su
+# run-parts --verbose /etc/cron.daily # Run all anacron daily jobs
 # system("cd /home/emrys/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/jsPsychAdmin/admin/ && Rscript sync_data_active_protocols.R")
 
 
@@ -100,25 +101,38 @@ PIDs =
 1:length(PIDs) |>
   purrr::walk( ~ {
 
-    # .x=1
+    # .x = 1
     cli::cli_h1("Project {PIDs[.x]}")
 
     # Clean outputs/data/
     cli::cli_h2("Clean up outputs/data")
+
     # Make sure folder exists and extract jsPsychHelpeR.zip there
     if (!dir.exists("outputs/data/")) dir.create("outputs/data/", recursive = TRUE)
     FILES = list.files(here::here("outputs/data/"), full.names = TRUE, pattern = "DF_clean|DF_raw")
     file.remove(FILES)
     Sys.sleep(5) # Give some time to sync changes to google drive
 
-    # Download data and ADDS to the zip data
+    # Downloads data and ADDS to the zip data
     cli::cli_h2("Downloading data for project {PIDs[.x]}")
-    jsPsychHelpeR::get_zip(pid = PIDs[.x], what = "data")
 
-    # Read ZIP and process data
+    # Tempdir to unzip and get files
+    OUTPUT_folder = paste0(tempdir(), "/ZIP", PIDs[.x])
+
+    # Try to get the zip name
     zip_name = here::here(paste0("../SHARED-data/", PIDs[.x], "/", PIDs[.x], ".zip"))
 
+    # Check if it exists and unzip to tempdir
+    if (file.exists(zip_name)) utils::unzip(zip_name, overwrite = TRUE, exdir = OUTPUT_folder, setTimes = TRUE)
 
+    # Sync files to tempdir. We use tempdir_location = OUTPUT_folder so only new files will be downloaded
+    jsPsychHelpeR::get_zip(pid = PIDs[.x], what = "data", all_messages = FALSE, tempdir_location = OUTPUT_folder)
+
+    # If case the zip did not exist before, now it should (if they were files)
+    if (!file.exists(zip_name)) zip_name = here::here(paste0("../SHARED-data/", PIDs[.x], "/", PIDs[.x], ".zip"))
+
+
+    # Read ZIP and process data
     if (file.exists(zip_name)) {
 
       # Process data (DF_raw and DF_clean)
