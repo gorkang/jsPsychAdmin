@@ -12,9 +12,7 @@ Functions to help with common administrative tasks for jsPsychR protocols
 First, install dependencies:
 
 ```
-  remotes::install_github("skgrange/threadr")
   sudo apt install sshpass
-
 ```
 
 

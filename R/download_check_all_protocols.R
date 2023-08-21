@@ -1,11 +1,11 @@
 #' SYNC ALL protocols to folder CSCN-server and check
+#'
 #' Will sync all protocols on server to the LOCAL folder ../CSCN-server
 #' Then, will CHECK:
 #' - Tasks with no prepare_TASK() script!
 #' - Tasks NOT in Google Doc
 #' - Check trialid's are OK
 #' - Check no missing info in Google doc of NEW tasks
-
 #'
 #' @param gmail_account Gmail account to connect to google sheets
 #'
@@ -13,7 +13,7 @@
 #' @export
 #'
 #' @examples
-download_check_all_protocols <- function(gmail_account, dont_ask = FALSE) {
+download_check_all_protocols <- function(gmail_account, dont_ask = FALSE, show_all_messages = FALSE) {
 
 # DOWNLOAD AND CHECK -----------------------------------------------------
 
@@ -27,7 +27,7 @@ download_check_all_protocols <- function(gmail_account, dont_ask = FALSE) {
       check_new_task_tabs = TRUE,
       delete_nonexistent = TRUE,
       dont_ask = dont_ask,
-      show_all_messages = FALSE,
+      show_all_messages = show_all_messages,
       gmail_account = gmail_account
     )
 

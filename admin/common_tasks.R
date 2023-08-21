@@ -13,7 +13,7 @@
 
 # Sync and check all protocols --------------------------------------------
 
-  jsPsychAdmin::download_check_all_protocols(gmail_account = "gorkang@gmail.com", dont_ask = TRUE)
+  jsPsychAdmin::download_check_all_protocols(gmail_account = "gorkang@gmail.com", dont_ask = TRUE, show_all_messages = TRUE)
 
   jsPsychHelpeR::sync_server_local(server_folder = "",
                                    local_folder = here::here(paste0("..", "/CSCN-server/protocols/")),
@@ -101,3 +101,49 @@
                                    download_files = TRUE,
                                    folder = "~/Downloads/jsPsychHelpeR37"
                                    )
+
+
+
+
+# COMBOS ------------------------------------------------------------------
+
+
+## Create & Simulate & Prepare ---------------------------------------------
+
+  jsPsychMaker::create_protocol(
+    folder_tasks = "~/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/jsPsychMaker/admin/example_ALL/",
+    folder_output = "~/Downloads/protocolALL999",
+    launch_browser = TRUE,
+    options_separator = ";"
+  )
+
+  jsPsychMonkeys::release_the_monkeys(uid = "1",
+                                      sequential_parallel =  "sequential",
+                                      number_of_cores = 1,
+                                      local_folder_tasks = "~/Downloads/protocolALL999/")
+
+  jsPsychHelpeR::run_initial_setup(pid = 999, data_location = "~/Downloads/protocolALL999/.data/")
+
+
+
+## Clean server & Launch Monkeys -------------------------------------------
+
+  PROTOCOLID = "test/protocols_DEV/31" # Debe estar en test/protocols_DEV/!!! o ser 999
+  pid = gsub("test/protocols_DEV/", "", PROTOCOLID)
+  cli::cli_h1("PROTOCOL {pid}")
+
+  # 1) Clean data and MySQL DB
+  # rstudioapi::navigateToFile(".vault/.credentials")
+  jsPsychAdmin::clean_up_dev_protocol(protocol_id = PROTOCOLID)
+
+
+  # 2) LAUNCH MONKEYS
+  jsPsychMonkeys::release_the_monkeys(uid = "1:10",
+                                      server_folder_tasks = PROTOCOLID,
+                                      sequential_parallel = "parallel",
+                                      number_of_cores = 10,
+                                      big_container = TRUE,
+                                      keep_alive = FALSE, open_VNC = FALSE, screenshot = FALSE,
+                                      credentials_folder = here::here(".vault/"))
+
+

@@ -2,23 +2,18 @@
 % Please edit documentation in R/download_check_all_protocols.R
 \name{download_check_all_protocols}
 \alias{download_check_all_protocols}
-\title{SYNC ALL protocols to folder CSCN-server and check
-Will sync all protocols on server to the LOCAL folder ../CSCN-server
-Then, will CHECK:
-\itemize{
-\item Tasks with no prepare_TASK() script!
-\item Tasks NOT in Google Doc
-\item Check trialid's are OK
-\item Check no missing info in Google doc of NEW tasks
-}}
+\title{SYNC ALL protocols to folder CSCN-server and check}
 \usage{
-download_check_all_protocols(gmail_account, dont_ask = FALSE)
+download_check_all_protocols(
+  gmail_account,
+  dont_ask = FALSE,
+  show_all_messages = FALSE
+)
 }
 \arguments{
 \item{gmail_account}{Gmail account to connect to google sheets}
 }
 \description{
-SYNC ALL protocols to folder CSCN-server and check
 Will sync all protocols on server to the LOCAL folder ../CSCN-server
 Then, will CHECK:
 \itemize{

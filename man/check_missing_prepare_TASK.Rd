@@ -19,6 +19,7 @@ check_missing_prepare_TASK(
   check_trialids = FALSE,
   check_new_task_tabs = FALSE,
   delete_nonexistent = FALSE,
+  ignore_existing = TRUE,
   dont_ask = FALSE,
   show_all_messages = FALSE,
   helper_folder = ".",
@@ -34,6 +35,8 @@ check_missing_prepare_TASK(
 \item{check_new_task_tabs}{Check new_tasks Google doc TRUE/FALSE}
 
 \item{delete_nonexistent}{Delete local folders when they do not exist in the server? TRUE/FALSE}
+
+\item{ignore_existing}{If TRUE, does not overwrite existing files even if they are newer. Good for .data/, Bad for rest}
 
 \item{show_all_messages}{TRUE/FALSE}
 

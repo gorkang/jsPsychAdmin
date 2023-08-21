@@ -10,6 +10,7 @@
 #' @param check_trialids Check trialid's are OK? TRUE/FALSE
 #' @param check_new_task_tabs Check new_tasks Google doc TRUE/FALSE
 #' @param delete_nonexistent Delete local folders when they do not exist in the server? TRUE/FALSE
+#' @param ignore_existing If TRUE, does not overwrite existing files even if they are newer. Good for .data/, Bad for rest
 #' @param show_all_messages TRUE/FALSE
 #' @param helper_folder By default, the present folder
 #' @param CSCN_server_folder By default, ../CSCN-server/protocols/
@@ -23,6 +24,7 @@ check_missing_prepare_TASK <- function(sync_protocols = FALSE,
                                        check_trialids = FALSE,
                                        check_new_task_tabs = FALSE,
                                        delete_nonexistent = FALSE,
+                                       ignore_existing = TRUE,
                                        dont_ask = FALSE,
                                        show_all_messages = FALSE,
                                        helper_folder = ".",
@@ -75,6 +77,7 @@ if (is.null(gmail_account)) cli::cli_abort("Enter your gmail account in 'gmail_a
                       only_test = !sync_protocols, # we do !sync_protocols because the parameter is only_test (!)
                       exclude_csv = TRUE, # DO NOT INCLUDE DATA
                       delete_nonexistent = delete_nonexistent, # Delete files localy if they are NOT in server anymore
+                      ignore_existing = ignore_existing,
                       dont_ask = dont_ask
                       )
   }

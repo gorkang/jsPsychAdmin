@@ -30,12 +30,17 @@
 
   tasks_canonical = jsPsychMaker::extract_tasks_from_protocol(folder_protocol = "../jsPsychMaker/canonical_protocol/")
 
-  jsPsychMaker::update_config_js(folder_protocol = "../jsPsychMaker/canonical_protocol/",
-                                 tasks = tasks_canonical,
-                                 block_tasks = "randomly_ordered_tasks_1")
+  # jsPsychMaker::update_config_js(folder_protocol = "../jsPsychMaker/canonical_protocol/",
+  #                                tasks = tasks_canonical,
+  #                                block_tasks = "randomly_ordered_tasks_1")
+  # rstudioapi::navigateToFile("../jsPsychMaker/canonical_protocol/config.js")
 
+  jsPsychMaker::create_protocol(canonical_tasks = tasks_canonical$tasks)
 
-  rstudioapi::navigateToFile("../jsPsychMaker/canonical_protocol/config.js")
+  jsPsychMonkeys::release_the_monkeys(uid = 1,
+                                      local_folder_tasks = here::here("~/Downloads/new_protocol_999/"),
+                                      number_of_cores = 1,
+                                      open_VNC = TRUE)
 
 
 
