@@ -126,7 +126,7 @@ PIDs =
     if (file.exists(zip_name)) utils::unzip(zip_name, overwrite = TRUE, exdir = OUTPUT_folder, setTimes = TRUE)
 
     # Sync files to tempdir. We use tempdir_location = OUTPUT_folder so only new files will be downloaded
-    jsPsychHelpeR::get_zip(pid = PIDs[.x], what = "data", all_messages = FALSE, tempdir_location = OUTPUT_folder)
+    jsPsychHelpeR::get_zip(pid = PIDs[.x], what = "data", ignore_existing = TRUE, all_messages = FALSE, tempdir_location = OUTPUT_folder)
 
     # If case the zip did not exist before, now it should (if they were files)
     if (!file.exists(zip_name)) zip_name = here::here(paste0("../SHARED-data/", PIDs[.x], "/", PIDs[.x], ".zip"))
