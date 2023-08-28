@@ -4,10 +4,14 @@
 
 # Install packages --------------------------------------------------------
 
-  # renv::install(packages = c("gorkang/jsPsychHelpeR",
-  #                            "gorkang/jsPsychMonkeys",
-  #                            "gorkang/jsPsychMaker",
-  #                            "gorkang/jsPsychAdmin"))
+# renv::install(
+#   packages = c(
+#     "gorkang/jsPsychHelpeR",
+#     "gorkang/jsPsychMonkeys",
+#     "gorkang/jsPsychMaker",
+#     "gorkang/jsPsychAdmin"
+#     )
+#   )
 
 
 
