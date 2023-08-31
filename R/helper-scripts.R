@@ -230,3 +230,65 @@ set_permissions_google_drive <- function(pid, email_IP) {
 
 }
 
+
+#' simulate_prepare_template
+#' Simulate and prepare data for a jsPsychMaker folder protocol (or just create the code)
+#'
+#' @param folder_protocol jsPsychMaker folder protocol
+#' @param n_participants Number of participants to simulate
+#' @param print_watch_run print or run the code
+#' @param sleep_before_running number of seconds to sleep before running the code
+#'
+#' @return Will print the jsPsychMonkeys and jsPsychHelpeR commands
+#' @export
+simulate_prepare <- function(folder_protocol = NULL, n_participants = 100, print_watch_run = "print", sleep_before_running = 3) {
+
+  # folder_protocol = "~/Downloads/new_protocol_999/"
+  # n_participants = 100
+
+  pid = stringi::stri_extract_all(basename(folder_protocol), regex = "[0-9]{1,5}")[[1]]
+
+  if (length(pid) > 1) cli::cli_abort("Multiple numbers found in folder {.code {basename(folder_protocol)}/}: {pid}")
+  if (is.na(pid)) cli::cli_abort("No number found in folder {.code {basename(folder_protocol)}/}")
+
+  # disable_web_security = TRUE is needed for local protocols with audio files, etc.
+  if (print_watch_run == "watch") {
+    monkeys_string = paste0('jsPsychMonkeys::release_the_monkeys(uid = 1, local_folder_tasks = "', normalizePath(folder_protocol), '", open_VNC = TRUE, disable_web_security = TRUE)')
+  } else {
+    monkeys_string = paste0('jsPsychMonkeys::release_the_monkeys(uid = 1:', n_participants, ', sequential_parallel = "parallel", number_of_cores = 15, local_folder_tasks = "', normalizePath(folder_protocol), '", disable_web_security = TRUE)')
+  }
+
+
+  helper_string = paste0('jsPsychHelpeR::run_initial_setup(pid = ', pid, ', data_location = "', folder_protocol, '/.data", folder = "~/Downloads/jsPsychHelpeR', pid, '")')
+
+  final_string = c(paste0("Simulate, prepare protocol in `", folder_protocol, "`: \n\n"), monkeys_string, "\n\n", helper_string, "\n\n")
+
+
+  if (print_watch_run == "watch") {
+
+    cli::cli_h1("Release a monkey")
+    cli::cli_alert_info(monkeys_string)
+    Sys.sleep(sleep_before_running)
+    eval(str2lang(monkeys_string))
+
+  } else if (print_watch_run == "run") {
+
+    cli::cli_h1("Release the monkeys")
+    cli::cli_alert_info(monkeys_string)
+    Sys.sleep(sleep_before_running)
+    eval(str2lang(monkeys_string))
+
+    cli::cli_h1("Data preparation with jsPsychHelpeR")
+    cli::cli_alert_info(helper_string)
+    Sys.sleep(sleep_before_running)
+    eval(str2lang(helper_string))
+
+  } else {
+    cli::cli_alert_info(final_string)
+    cli::cli_alert_info("Copy, pase and run the previous strings to a script")
+  }
+
+
+}
+
+

@@ -171,15 +171,15 @@ if (is.null(gmail_account)) cli::cli_abort("Enter your gmail account in 'gmail_a
 
     cli::cli_h1("FOLDER: protocols/")
     OUTPUT_ALL = 1:length(ALL_PROTOCOLS) |>
-      purrr::map(~  jsPsychMaker::check_trialids(local_folder_protocol = paste0(local_protocols, ALL_PROTOCOLS[.x], "/"), show_all_messages = show_all_messages))
+      purrr::map(~  jsPsychMaker::check_trialids(local_folder_protocol = paste0(local_protocols, ALL_PROTOCOLS[.x], "/"), show_messages = show_all_messages))
 
     cli::cli_h1("FOLDER: protocols/test/protocols_DEV/")
     OUTPUT_TEST = 1:length(TEST_PROTOCOLS) |>
-      purrr::map(~  jsPsychMaker::check_trialids(local_folder_protocol = paste0(local_protocols, "/test/protocols_DEV/", TEST_PROTOCOLS[.x], "/"), show_all_messages = show_all_messages))
+      purrr::map(~  jsPsychMaker::check_trialids(local_folder_protocol = paste0(local_protocols, "/test/protocols_DEV/", TEST_PROTOCOLS[.x], "/"), show_messages = show_all_messages))
 
     # CHECK 999
     cli::cli_h1("FOLDER: protocols/999/")
-    jsPsychMaker::check_trialids(local_folder_protocol = paste0(local_protocols, "/999/"), show_all_messages = show_all_messages)
+    jsPsychMaker::check_trialids(local_folder_protocol = paste0(local_protocols, "/999/"), show_messages = show_all_messages)
 
   }
 

@@ -8,12 +8,14 @@
 #' - Check no missing info in Google doc of NEW tasks
 #'
 #' @param gmail_account Gmail account to connect to google sheets
+#' @param ignore_existing If TRUE, does not overwrite existing files even if they are newer. Good for .data/, Bad for rest
+#' @param show_all_messages TRUE / FALSE
 #'
 #' @return
 #' @export
 #'
 #' @examples
-download_check_all_protocols <- function(gmail_account, dont_ask = FALSE, show_all_messages = FALSE) {
+download_check_all_protocols <- function(gmail_account, ignore_existing = TRUE, dont_ask = FALSE, show_all_messages = FALSE) {
 
 # DOWNLOAD AND CHECK -----------------------------------------------------
 
@@ -26,6 +28,7 @@ download_check_all_protocols <- function(gmail_account, dont_ask = FALSE, show_a
       check_trialids = TRUE,
       check_new_task_tabs = TRUE,
       delete_nonexistent = TRUE,
+      ignore_existing = ignore_existing,
       dont_ask = dont_ask,
       show_all_messages = show_all_messages,
       gmail_account = gmail_account

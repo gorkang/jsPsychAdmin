@@ -4,20 +4,23 @@
 
 # Install packages --------------------------------------------------------
 
-# renv::install(
-#   packages = c(
-#     "gorkang/jsPsychHelpeR",
-#     "gorkang/jsPsychMonkeys",
-#     "gorkang/jsPsychMaker",
-#     "gorkang/jsPsychAdmin"
-#     )
-#   )
+renv::install(
+  packages = c(
+    "gorkang/jsPsychHelpeR",
+    "gorkang/jsPsychMonkeys",
+    "gorkang/jsPsychMaker",
+    "gorkang/jsPsychAdmin"
+    )
+  )
 
 
 
 # Sync and check all protocols --------------------------------------------
 
-  jsPsychAdmin::download_check_all_protocols(gmail_account = "gorkang@gmail.com", dont_ask = TRUE, show_all_messages = TRUE)
+jsPsychAdmin::download_check_all_protocols(gmail_account = "gorkang@gmail.com",
+                                           ignore_existing = FALSE, # Overwrites existing files that changed
+                                           dont_ask = TRUE,
+                                           show_all_messages = TRUE)
 
   jsPsychHelpeR::sync_server_local(server_folder = "",
                                    local_folder = here::here(paste0("..", "/CSCN-server/protocols/")),
@@ -115,18 +118,25 @@
 ## Create & Simulate & Prepare ---------------------------------------------
 
   jsPsychMaker::create_protocol(
-    folder_tasks = "~/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/jsPsychMaker/admin/example_ALL/",
+    folder_tasks = "~/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/jsPsychMaker/admin/example_tasks/example_tasks/",
     folder_output = "~/Downloads/protocolALL999",
-    launch_browser = TRUE,
+    launch_browser = FALSE,
     options_separator = ";"
   )
 
-  jsPsychMonkeys::release_the_monkeys(uid = "1",
-                                      sequential_parallel =  "sequential",
-                                      number_of_cores = 1,
-                                      local_folder_tasks = "~/Downloads/protocolALL999/")
+  # AUTOMATICALLY
+  jsPsychAdmin::simulate_prepare(folder_protocol = "~/Downloads/protocolALL999", n_participants = 3, print_watch_run = "print")
+  jsPsychAdmin::simulate_prepare(folder_protocol = "~/Downloads/protocolALL999", print_watch_run = "watch")
+  jsPsychAdmin::simulate_prepare(folder_protocol = "~/Downloads/protocolALL999", n_participants = 3, print_watch_run = "run")
 
-  jsPsychHelpeR::run_initial_setup(pid = 999, data_location = "~/Downloads/protocolALL999/.data/")
+
+  # MANUALLY
+  # jsPsychMonkeys::release_the_monkeys(uid = "1",
+  #                                     sequential_parallel =  "sequential",
+  #                                     number_of_cores = 1,
+  #                                     local_folder_tasks = "~/Downloads/protocolALL999/")
+  #
+  # jsPsychHelpeR::run_initial_setup(pid = 999, data_location = "~/Downloads/protocolALL999/.data/")
 
 
 
