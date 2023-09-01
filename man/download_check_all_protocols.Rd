@@ -6,12 +6,17 @@
 \usage{
 download_check_all_protocols(
   gmail_account,
+  ignore_existing = TRUE,
   dont_ask = FALSE,
   show_all_messages = FALSE
 )
 }
 \arguments{
 \item{gmail_account}{Gmail account to connect to google sheets}
+
+\item{ignore_existing}{If TRUE, does not overwrite existing files even if they are newer. Good for .data/, Bad for rest}
+
+\item{show_all_messages}{TRUE / FALSE}
 }
 \description{
 Will sync all protocols on server to the LOCAL folder ../CSCN-server

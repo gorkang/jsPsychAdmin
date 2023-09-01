@@ -15,7 +15,7 @@ TEST <- function() {
 #' @examples
 DELETE_data_server <- function(pid = NULL) {
 
-  # CHECKS  ------------------------
+  # CHECKS  ---
   if (is.null(pid)) cli::cli_abort("pid needs a value")
   credentials_exist = file.exists(".vault/.credentials")
   SSHPASS = Sys.which("sshpass") # Check if sshpass is installed
@@ -32,7 +32,7 @@ DELETE_data_server <- function(pid = NULL) {
   }
 
 
-  # DELETE ------------------------------------------------------------------
+  # DELETE ---
 
   list_credentials = source(".vault/.credentials") # Get server credentials
   folder_to_delete = paste0(pid, '/.data/')
@@ -104,7 +104,7 @@ DELETE_data_server <- function(pid = NULL) {
 #' @examples
 CHECK_secrets_OK <- function(path_to_secrets = "../../../../../", path_to_credentials = "") {
 
-  # CHECKS  ------------------------
+  # CHECKS  ---
   if (is.null(path_to_secrets)) cli::cli_abort("path_to_secrets needs a value")
   credentials_exist = file.exists(paste0(path_to_credentials, ".vault/.credentials"))
   SSHPASS = Sys.which("sshpass") # Check if sshpass is installed
@@ -121,7 +121,7 @@ CHECK_secrets_OK <- function(path_to_secrets = "../../../../../", path_to_creden
   }
 
 
-  # CHECK ------------------------------------------------------------------
+  # CHECK ---
 
   list_credentials = source(paste0(path_to_credentials, ".vault/.credentials")) # Get server credentials
   file_to_check = paste0(path_to_secrets, '/.secrets_mysql.php')
@@ -292,3 +292,98 @@ simulate_prepare <- function(folder_protocol = NULL, n_participants = 100, print
 }
 
 
+
+#' get_parameters_of_function
+#' Prints usage and examples, shows help, and loads usage parameters to Global environment.
+#'
+#' @param name_function Name of the function
+#' @param load_parameters Load default parameters and their values to the Global Environment
+#'
+#' @return prints the parameters and examples in the console, shows help, loads the parameters to the Global environment
+#' @export
+#' @importFrom rlang new_environment
+#' @importFrom pkgload inst
+#' @importFrom purrr map
+#' @importFrom cli cli_h1
+#'
+#' @examples
+#' \dontrun{
+#' get_parameters_of_function(name_function = "jsPsychMaker::create_protocol()", load_parameters = TRUE)
+#' }
+get_parameters_of_function <- function(name_function, load_parameters = TRUE) {
+
+  # Splits name_function to c(package, function)
+  name_function_split = strsplit(gsub("(.*)\\(\\)", "\\1", name_function), "::") |> unlist()
+
+  # Create new environment where to load the help files
+  temp_env <- rlang::new_environment()
+
+  # Loads rdb/rdx files in PackageName/help/PackageName[.rdb/.rdx]
+  X = lazyLoad(
+    file.path(
+      paste0(pkgload::inst(name_function_split[1]), "/help/", name_function_split[1])
+      ), envir = temp_env
+    )
+
+  # Load everything in function_help
+  function_help = get(name_function_split[2], envir = temp_env)
+
+  # Get names for each element of the list
+  names_elements_list = purrr::map(function_help, attr , which = "Rd_tag") |> unlist()
+
+  # Where do we have usage and examples
+  which_usage = which(names_elements_list == "\\usage")
+  which_examples = which(names_elements_list == "\\examples")
+
+  if (length(which_usage) != 0) {
+
+    # Load usage
+    function_parameters = function_help[[which_usage]]
+
+    # Parameters in usage go from 3 to length-1
+    start_parameters = 3
+    end_parameters = length(function_parameters) - 1
+    function_parameters_clean = gsub(",$", "", trimws(function_parameters[start_parameters:end_parameters]))
+
+    # Load parameters and their values to the global environment
+    if (load_parameters == TRUE) {
+
+      parameters_function_separated = strsplit(function_parameters_clean, " = ")
+      parameters_function_separated |>
+        purrr::map(~ { assign(.x[1], eval(parse(text = .x[2])), inherits = TRUE)})
+
+    }
+
+
+  } else {
+
+    function_parameters_clean = "Parameters NOT FOUND"
+
+  }
+
+  if (length(which_examples) != 0) {
+
+  function_examples = function_help[[which_examples]][[2]] |> unlist()
+
+  } else {
+    function_examples = "Examples NOT FOUND"
+  }
+
+
+
+
+  # OUTPUTS ---
+
+  # Show help for function
+  help(package = name_function_split[1], topic = name_function_split[2]) |> print()
+
+  # Print examples
+  cli::cli_h1("Examples")
+  function_examples |>  cat()
+
+  # Print parameters
+  cli::cli_h1("Parameters")
+  function_parameters_clean |> cat(sep = "\n")
+
+
+}

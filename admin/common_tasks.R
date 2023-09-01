@@ -4,23 +4,30 @@
 
 # Install packages --------------------------------------------------------
 
-renv::install(
-  packages = c(
-    "gorkang/jsPsychHelpeR",
-    "gorkang/jsPsychMonkeys",
-    "gorkang/jsPsychMaker",
-    "gorkang/jsPsychAdmin"
-    )
-  )
+# renv::install(
+#   packages = c(
+#     "gorkang/jsPsychHelpeR",
+#     "gorkang/jsPsychMonkeys",
+#     "gorkang/jsPsychMaker",
+#     "gorkang/jsPsychAdmin"
+#     )
+#   )
 
+
+
+# NEW ---------------------------------------------------------------------
+
+# Get all parameters of a function (to help DEBUG)
+jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
 
 
 # Sync and check all protocols --------------------------------------------
 
-jsPsychAdmin::download_check_all_protocols(gmail_account = "gorkang@gmail.com",
-                                           ignore_existing = FALSE, # Overwrites existing files that changed
-                                           dont_ask = TRUE,
-                                           show_all_messages = TRUE)
+  jsPsychAdmin::download_check_all_protocols(gmail_account = "gorkang@gmail.com",
+                                             ignore_existing = FALSE, # Overwrites existing files that changed
+                                             dont_ask = TRUE,
+                                             show_all_messages = TRUE)
+
 
   jsPsychHelpeR::sync_server_local(server_folder = "",
                                    local_folder = here::here(paste0("..", "/CSCN-server/protocols/")),
@@ -28,6 +35,7 @@ jsPsychAdmin::download_check_all_protocols(gmail_account = "gorkang@gmail.com",
                                    only_test = FALSE,
                                    exclude_csv = TRUE, # DO NOT INCLUDE DATA
                                    delete_nonexistent = TRUE,
+                                   ignore_existing = FALSE, # If a file already exists, ignore it. Good for data, bad for protocols.
                                    dont_ask = TRUE
                                    )
 
@@ -84,10 +92,22 @@ jsPsychAdmin::download_check_all_protocols(gmail_account = "gorkang@gmail.com",
 # Download/Upload specific protocol ---------------------------------------
 
   # UPLOAD
-  jsPsychHelpeR::sync_server_local(direction = "local_to_server", local_folder = "protocols_DEV/999/", server_folder = "test/protocols_DEV/999/", only_test = TRUE, delete_nonexistent = FALSE)
+  jsPsychHelpeR::sync_server_local(
+    direction = "local_to_server",
+    local_folder = "protocols_DEV/999/",
+    server_folder = "test/protocols_DEV/999/",
+    only_test = TRUE,
+    delete_nonexistent = FALSE
+  )
 
   # DOWNLOAD
-  jsPsychHelpeR::sync_server_local(direction = "server_to_local", server_folder = "test/protocols_DEV/999/", local_folder = "protocols_DEV/999/", only_test = TRUE, delete_nonexistent = FALSE)
+  jsPsychHelpeR::sync_server_local(
+    direction = "server_to_local",
+    server_folder = "test/protocols_DEV/999/",
+    local_folder = "protocols_DEV/999/",
+    only_test = TRUE,
+    delete_nonexistent = FALSE
+  )
 
 
 
@@ -125,9 +145,15 @@ jsPsychAdmin::download_check_all_protocols(gmail_account = "gorkang@gmail.com",
   )
 
   # AUTOMATICALLY
+
+  # Only prints in console the code
   jsPsychAdmin::simulate_prepare(folder_protocol = "~/Downloads/protocolALL999", n_participants = 3, print_watch_run = "print")
-  jsPsychAdmin::simulate_prepare(folder_protocol = "~/Downloads/protocolALL999", print_watch_run = "watch")
+
+  # Runs everything
   jsPsychAdmin::simulate_prepare(folder_protocol = "~/Downloads/protocolALL999", n_participants = 3, print_watch_run = "run")
+
+  # Run a single Monkey and open VNC to see how it goes
+  jsPsychAdmin::simulate_prepare(folder_protocol = "~/Downloads/protocolALL999", print_watch_run = "watch")
 
 
   # MANUALLY

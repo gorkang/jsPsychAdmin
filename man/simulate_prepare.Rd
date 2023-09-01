@@ -8,7 +8,7 @@ Simulate and prepare data for a jsPsychMaker folder protocol (or just create the
 simulate_prepare(
   folder_protocol = NULL,
   n_participants = 100,
-  print_run = "print",
+  print_watch_run = "print",
   sleep_before_running = 3
 )
 }
@@ -17,7 +17,7 @@ simulate_prepare(
 
 \item{n_participants}{Number of participants to simulate}
 
-\item{print_run}{print or run the code}
+\item{print_watch_run}{print or run the code}
 
 \item{sleep_before_running}{number of seconds to sleep before running the code}
 }
