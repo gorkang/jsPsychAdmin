@@ -201,13 +201,17 @@ set_permissions_google_drive <- function(pid, email_IP) {
 
     # CHECK
     if (!is.list(permissions_ID$drive_resource) | !length(permissions_ID$drive_resource) >= 1) {
-      cli::cli_alert_danger("permissions_ID$drive_resource is not a list OR not length >=1")
+      cli::cli_alert_danger("permissions_ID$drive_resource is not a list OR not length >=1. SAVED file to DEBUG: DEBUG_permissions_ID.rds")
       str(permissions_ID$drive_resource)
+      saveRDS(permissions_ID, "DEBUG_permissions_ID.rds")
       # permissions_ID$permissions_resource # MAYBE SHOULD USE THIS? INSTEAD OF: permissions_ID$drive_resource[[1]]$permissions
+      # list_permissions = permissions_ID$permissions_resource
+      # list_permissions[[1]]$permissions[[1]]$emailAddress
+      # list_permissions[[1]]$permissions[[1]]$role
     }
 
-
     list_permissions = permissions_ID$drive_resource[[1]]$permissions
+
     DF_permissions = 1:length(list_permissions) |>
       purrr::map_df(~{
         tibble::tibble(email = list_permissions[[.x]]$emailAddress,
