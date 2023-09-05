@@ -59,7 +59,31 @@ jsPsychHelpeR::sync_server_local(server_folder = "",
                                  only_test = FALSE,
                                  exclude_csv = TRUE, # DO NOT INCLUDE DATA
                                  delete_nonexistent = TRUE,
+                                 ignore_existing = FALSE, # Important to overwrite files that already existed and changed
                                  dont_ask = TRUE)
+
+
+
+# Backup MySQL DB ---------------------------------------------------------
+
+# Creates full backup of MySQL DB in user-cscn/apps/uai-cscn/DB_dumps/
+jsPsychAdmin:::backup_MySQL_DB()
+
+# Give it some time to finish the backup
+Sys.sleep(30)
+
+# Copy server MySQL backups to local folder
+jsPsychHelpeR::sync_server_local(server_folder = "../../../../../DB_dumps/",
+                                 local_folder = here::here(paste0("..", "/CSCN-server/DB_backups/")),
+                                 direction = "server_to_local",
+                                 only_test = FALSE,
+                                 exclude_csv = TRUE, # DO NOT INCLUDE DATA
+                                 delete_nonexistent = TRUE,
+                                 ignore_existing = FALSE, # Important to overwrite files that already existed and changed
+                                 dont_ask = TRUE)
+
+
+
 
 
 # Sources and parameters --------------------------------------------------

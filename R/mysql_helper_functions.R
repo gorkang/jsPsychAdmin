@@ -259,3 +259,39 @@ delete_MySQL_tables_pid <- function(pid) {
   }
 
 }
+
+
+
+backup_MySQL_DB <- function() {
+
+  list_credentials = source(".vault/.credentials")
+  DB_credentials = decrypt_data(key_public = readLines(".vault/data_public_key.txt"), data_encrypted = ".vault/data_encrypted.rds", mysupersecretpassword = list_credentials$value$password)
+  # output_file = paste0('apps/uai-cscn/public/lab/DB_dumps/', Sys.Date(), '_backupDB.sql.gz')
+  output_file = paste0('apps/uai-cscn/DB_dumps/', Sys.Date(), '_backupDB.sql.gz')
+
+  prepare_backup_command <- function(DB_credentials, output_file) {
+
+    # Prepare commands
+    Connect_command = paste0("sshpass -p ", DB_credentials$value$password, " ssh -tt -o StrictHostKeyChecking=no ", DB_credentials$value$user, "@", DB_credentials$value$IP, " -L 3308:127.0.0.1:3306")
+
+    DB_command = paste0('mysqldump  --host=localhost --default-character-set=utf8 --user=', DB_credentials$value$UID, ' --password=', DB_credentials$value$PWD, '  --no-tablespaces --protocol=tcp --single-transaction=TRUE --routines --events "db001_cscn" | gzip -9 > ', output_file)
+
+# Connect to server and run backup
+# **These lines need to be completely to the left**
+system(paste0(Connect_command, " << EOF
+", DB_command, ";
+EOF
+"))
+# *** ***
+
+  }
+
+  # Run in background
+  ssh_tunnel =  callr::r_bg(func = prepare_backup_command, args = list(DB_credentials, output_file))
+
+  cli::cli_alert_info("MySQL backup: {.code {output_file}}")
+  # After 60s, kill bg process
+  # Sys.sleep(60)
+  # ssh_tunnel$kill()
+
+}
