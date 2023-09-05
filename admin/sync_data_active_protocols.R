@@ -9,10 +9,12 @@
 
 # If we need Google Drive authentication, run googlesheets4::gs4_auth("gorkang@gmail.com") in this file and in set_permissions_google_drive() in helper_functions_extra.R
 
-
 ########################################################################
 ################# THIS DOCUMENT RUNS DAILY via anacron #################
 ########################################################################
+
+# Can check result of running this usind `sudo mail`
+# After reading it, stays in /root/mbox
 
 
 
@@ -236,7 +238,7 @@ cli::cli_h1("CHECK permissions")
 
       # TODO: Use safer/quieter version of functions and check if errors or warnings
       # Set permissions, only if not ADMIN and does not already have permissions
-      jsPsychAdmin::set_permissions_google_drive(pid = DF_permisos$ID, email_IP = DF_permisos$contacto)
+      jsPsychAdmin::set_permissions_google_drive(pid = DF_permisos$ID, email_IP = trimws(DF_permisos$contacto))
 
     } else {
       cli::cli_alert_danger("pid {PIDs[.x]}: {DF_permisos$contacto} does NOT look like a proper email")
