@@ -198,6 +198,15 @@ set_permissions_google_drive <- function(pid, email_IP) {
 
     # Present permissions
     permissions_ID = ID |> googledrive::drive_reveal("permissions")
+
+    # CHECK
+    if (!is.list(permissions_ID$drive_resource) | !length(permissions_ID$drive_resource) >= 1) {
+      cli::cli_alert_danger("permissions_ID$drive_resource is not a list OR not length >=1")
+      str(permissions_ID$drive_resource)
+      # permissions_ID$permissions_resource # MAYBE SHOULD USE THIS? INSTEAD OF: permissions_ID$drive_resource[[1]]$permissions
+    }
+
+
     list_permissions = permissions_ID$drive_resource[[1]]$permissions
     DF_permissions = 1:length(list_permissions) |>
       purrr::map_df(~{
