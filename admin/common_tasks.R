@@ -94,17 +94,17 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
   # UPLOAD
   jsPsychHelpeR::sync_server_local(
     direction = "local_to_server",
-    local_folder = "protocols_DEV/999/",
-    server_folder = "test/protocols_DEV/999/",
-    only_test = TRUE,
-    delete_nonexistent = FALSE
+    local_folder = "../jsPsychMaker/protocols_DEV/22/",
+    server_folder = "test/protocols_DEV/22/",
+    only_test = FALSE,
+    delete_nonexistent = TRUE
   )
 
   # DOWNLOAD
   jsPsychHelpeR::sync_server_local(
     direction = "server_to_local",
     server_folder = "test/protocols_DEV/999/",
-    local_folder = "protocols_DEV/999/",
+    local_folder = "../jsPsychMaker/protocols_DEV/999/",
     only_test = TRUE,
     delete_nonexistent = FALSE
   )
