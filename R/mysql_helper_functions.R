@@ -264,9 +264,12 @@ delete_MySQL_tables_pid <- function(pid) {
 
 backup_MySQL_DB <- function() {
 
-  list_credentials = source(".vault/.credentials")
-  DB_credentials = decrypt_data(key_public = readLines(".vault/data_public_key.txt"), data_encrypted = ".vault/data_encrypted.rds", mysupersecretpassword = list_credentials$value$password)
-  # output_file = paste0('apps/uai-cscn/public/lab/DB_dumps/', Sys.Date(), '_backupDB.sql.gz')
+  list_credentials = source(here::here(".vault/.credentials"))
+
+  DB_credentials = decrypt_data(key_public = readLines(here::here(".vault/data_public_key.txt")),
+                                data_encrypted = here::here(".vault/data_encrypted.rds"),
+                                mysupersecretpassword = list_credentials$value$password)
+
   output_file = paste0('apps/uai-cscn/DB_dumps/', Sys.Date(), '_backupDB.sql.gz')
 
   prepare_backup_command <- function(DB_credentials, output_file) {
