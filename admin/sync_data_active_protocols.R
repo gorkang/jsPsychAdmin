@@ -38,9 +38,11 @@
 
 
 # TO TEST THIS WILL WORK WHEN RUN DAILY:
-# sudo su
-# run-parts --verbose /etc/cron.daily # Run all anacron daily jobs
-# system("cd /home/emrys/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/jsPsychAdmin/admin/ && Rscript sync_data_active_protocols.R")
+
+  # sudo su
+  # run-parts --verbose /etc/cron.daily # Run all anacron daily jobs
+
+  # system("cd /home/emrys/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/jsPsychAdmin/admin/ && Rscript sync_data_active_protocols.R")
 
 
 
@@ -93,20 +95,12 @@ jsPsychHelpeR::sync_server_local(server_folder = "../../../../../DB_dumps/",
 output_formats = c("csv", "csv2") # csv2 for Spanish locale csv
 
 
-# suppressPackageStartupMessages(source(here::here("_targets_packages.R")))
-# invisible(lapply(list.files(here::here("./R"), full.names = TRUE, pattern = ".R$"), source))
-
-# source(here::here("R/helper_functions.R"))
-# source(here::here("R/sync_server_local.R"))
+# GET google sheet --------------------------------------------------------
 
 google_sheet_ID = "1eE0xrk_DGIOShhWjqKaKhk0NIeb-7k0eoFG93822-Ho"
 cli::cli_h1("Reading https://docs.google.com/spreadsheets/d/{google_sheet_ID}/edit#gid=0")
 googlesheets4::gs4_auth("gorkang@gmail.com")
 googlesheets4::local_gs4_quiet() # No googlesheets4::read_sheet messages
-
-
-
-# GET google sheet --------------------------------------------------------
 
 DF_resumen_ALL = googlesheets4::read_sheet(google_sheet_ID, sheet = 1, skip = 0)
 
@@ -149,7 +143,12 @@ PIDs =
     zip_name = here::here(paste0("../SHARED-data/", PIDs[.x], "/", PIDs[.x], ".zip"))
 
     # Check if it exists and unzip to tempdir
-    if (file.exists(zip_name)) utils::unzip(zip_name, overwrite = TRUE, exdir = OUTPUT_folder, setTimes = TRUE)
+    if (file.exists(zip_name)) {
+      utils::unzip(zip_name, overwrite = TRUE, exdir = OUTPUT_folder, setTimes = TRUE)
+      zip_info_0 = file.info(zip_name)
+    } else {
+      zip_info_0 = NULL
+    }
 
     # Sync files to tempdir. We use tempdir_location = OUTPUT_folder so only new files will be downloaded
     jsPsychHelpeR::get_zip(pid = PIDs[.x], what = "data", ignore_existing = TRUE, all_messages = FALSE, tempdir_location = OUTPUT_folder)
@@ -157,54 +156,61 @@ PIDs =
     # If case the zip did not exist before, now it should (if they were files)
     if (!file.exists(zip_name)) zip_name = here::here(paste0("../SHARED-data/", PIDs[.x], "/", PIDs[.x], ".zip"))
 
+    # Get info of zip file after synching
+    zip_info_1 = file.info(zip_name)
+
 
     # Read ZIP and process data
     if (file.exists(zip_name)) {
 
-      # Process data (DF_raw and DF_clean)
-      cli::cli_h2("Processing data for project {PIDs[.x]}")
+      # Only process data if there is new data
+      if (!identical(zip_info_0$size, zip_info_1$size)) {
 
-      read_data_safely = purrr::quietly(purrr::safely(jsPsychHelpeR::read_data))
+        # Process data (DF_raw and DF_clean)
+        cli::cli_h2("Processing data for project {PIDs[.x]}")
 
-      DF_raw = read_data_safely(input_files = zip_name)
+        read_data_safely = purrr::quietly(purrr::safely(jsPsychHelpeR::read_data))
 
-      # If there are WARNINGS, show alert and store in file
-      if (length(DF_raw$warnings) > 0) {
-        cli::cli_alert_danger("{length(DF_raw$warnings)} warnings in pid = {PIDs[.x]} \n\n {DF_raw$warnings}")
-        clean_WARNING = gsub("\\'", "", DF_raw$warnings)
-        WARNING_string = glue::glue("--------------- {Sys.Date()} ---------------\n\n{length(DF_raw$warnings)} warnings in pid = {PIDs[.x]} \n\n {clean_WARNING}\n\n\n")
-        system(paste0("printf '%s\n' '", WARNING_string, "'  >> ~/Downloads/pid_", PIDs[.x], "_", length(DF_raw$warnings), "_warnings.txt"))
-      }
+        DF_raw = read_data_safely(input_files = zip_name)
 
-      if (is.null(DF_raw$result$error)) {
-
-        create_clean_data_safely = purrr::quietly(purrr::safely(jsPsychHelpeR::create_clean_data))
-
-        DF_clean = create_clean_data_safely(DF_raw$result$result)
-
-        if (is.null(DF_clean$result$error)){
-
-          # Copy processed files to destination folder
-          cli::cli_h2("Copy output processed files for project {PIDs[.x]}")
-          FILES_processed = list.files(here::here("outputs/data/"), full.names = TRUE, pattern = "DF_clean|DF_raw")
-          destination = paste0(dirname(zip_name), "/processed/")
-          if (!dir.exists(destination)) dir.create(destination)
-          file.copy(from = FILES_processed, to = paste0(destination, basename(FILES_processed)), overwrite = TRUE)
-          file.remove(FILES_processed)
-
-          # Create zip with process data
-          jsPsychHelpeR::zip_files(folder_files = destination,
-                    zip_name = paste0(destination, "", "processed.zip"),
-                    remove_files = TRUE)
-        } else {
-          # If there are ERRORS, show alert and store in file
-          cli::cli_alert_danger("{length(DF_clean$result$error$message)} ERRORS in pid = {PIDs[.x]} \n\n {DF_clean$result$error}")
-          clean_ERROR = gsub("\\'", "", DF_clean$result$error$message)
-          ERROR_string = glue::glue("--------------- {Sys.Date()} ---------------\n\n{length(DF_raw$warnings)} ERROR in pid = {PIDs[.x]} \n\n {clean_ERROR}\n\n\n")
-          system(paste0("printf '%s\n' '", ERROR_string, "'  >> ~/Downloads/pid_", PIDs[.x], "_", length(DF_clean$result$error), "_ERRORS.txt"))
-
+        # If there are WARNINGS, show alert and store in file
+        if (length(DF_raw$warnings) > 0) {
+          cli::cli_alert_danger("{length(DF_raw$warnings)} warnings in pid = {PIDs[.x]} \n\n {DF_raw$warnings}")
+          clean_WARNING = gsub("\\'", "", DF_raw$warnings)
+          WARNING_string = glue::glue("--------------- {Sys.Date()} ---------------\n\n{length(DF_raw$warnings)} warnings in pid = {PIDs[.x]} \n\n {clean_WARNING}\n\n\n")
+          system(paste0("printf '%s\n' '", WARNING_string, "'  >> ~/Downloads/pid_", PIDs[.x], "_", length(DF_raw$warnings), "_warnings.txt"))
         }
 
+        if (is.null(DF_raw$result$error)) {
+
+          create_clean_data_safely = purrr::quietly(purrr::safely(jsPsychHelpeR::create_clean_data))
+
+          DF_clean = create_clean_data_safely(DF_raw$result$result)
+
+          if (is.null(DF_clean$result$error)){
+
+            # Copy processed files to destination folder
+            cli::cli_h2("Copy output processed files for project {PIDs[.x]}")
+            FILES_processed = list.files(here::here("outputs/data/"), full.names = TRUE, pattern = "DF_clean|DF_raw")
+            destination = paste0(dirname(zip_name), "/processed/")
+            if (!dir.exists(destination)) dir.create(destination)
+            file.copy(from = FILES_processed, to = paste0(destination, basename(FILES_processed)), overwrite = TRUE)
+            file.remove(FILES_processed)
+
+            # Create zip with process data
+            jsPsychHelpeR::zip_files(folder_files = destination,
+                      zip_name = paste0(destination, "", "processed.zip"),
+                      remove_files = TRUE)
+          } else {
+            # If there are ERRORS, show alert and store in file
+            cli::cli_alert_danger("{length(DF_clean$result$error$message)} ERRORS in pid = {PIDs[.x]} \n\n {DF_clean$result$error}")
+            clean_ERROR = gsub("\\'", "", DF_clean$result$error$message)
+            ERROR_string = glue::glue("--------------- {Sys.Date()} ---------------\n\n{length(DF_raw$warnings)} ERROR in pid = {PIDs[.x]} \n\n {clean_ERROR}\n\n\n")
+            system(paste0("printf '%s\n' '", ERROR_string, "'  >> ~/Downloads/pid_", PIDs[.x], "_", length(DF_clean$result$error), "_ERRORS.txt"))
+
+          }
+
+        }
       }
     }
 
