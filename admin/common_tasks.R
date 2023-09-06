@@ -45,7 +45,10 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
 
   # Does NOT ask for password.
   # Uses the .credentials file + the public key to unlock the encrypted data_encrypted.rds
-  jsPsychAdmin::check_status_participants_protocol()
+  OUTPUT = jsPsychAdmin::check_status_participants_protocol()
+  OUTPUT$STATUS_BY_CONDITION
+  OUTPUT$TABLE_clean # This does not include Discarded
+  OUTPUT$TOTAL_participants
   # TODO: should also check how many files from how many tasks???
 
   # TODO: show how many participants per condition!!! column "conditions" condA: 1 | condB: 2 | condC: 2
@@ -185,5 +188,60 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
                                       big_container = TRUE,
                                       keep_alive = FALSE, open_VNC = FALSE, screenshot = FALSE,
                                       credentials_folder = here::here(".vault/"))
+
+
+
+
+
+# INSTALL MySQL drivers ---------------------------------------------------
+
+  # Check available Drivers:
+  odbc::odbcListDrivers()$name |> unique()
+
+  # data_encrypted.rds stores the MySQL Driver used
+
+
+  # 1. Download drivers ---
+
+  # A) From https://dev.mysql.com/downloads/mysql/
+    # Select Operating System: Ubuntu Linux
+    # Select OS Version: Ubuntu Linux 22.04 (x86, 64-bit)
+    # Download 1 file:
+      # mysql-community-client-plugins_... # e.g. mysql-community-client-plugins_8.1.0-1ubuntu22.04_amd64.deb
+
+  # B) From:  https://dev.mysql.com/downloads/connector/odbc/
+    # Select Operating System: Ubuntu Linux
+    # Select OS Version: Ubuntu Linux 22.04 (x86, 64-bit)
+    # Download 4 files:
+      # mysql-connector-odbc_...
+      # mysql-connector-odbc-dbgsym_...
+      # mysql-connector-odbc-setup_...
+      # mysql-connector-odbc-setup-dbgsym_...
+
+
+
+  # Copy the 5 files to a folder ---
+
+  # For example to ~/Downloads/FOLDER/:
+    # mysql-community-client-plugins_8.0.33-1ubuntu22.04_amd64.deb
+    # mysql-connector-odbc_8.0.33-1ubuntu22.04_amd64.deb
+    # mysql-connector-odbc-dbgsym_8.0.33-1ubuntu22.04_amd64.deb
+    # mysql-connector-odbc-setup_8.0.33-1ubuntu22.04_amd64.deb
+    # mysql-connector-odbc-setup-dbgsym_8.0.33-1ubuntu22.04_amd64.deb
+
+
+  # 2. Install drivers: ---
+
+  # sudo dpkg -i ~/Downloads/FOLDER/mysql-*
+
+  ## Remove
+  ## sudo apt remove mysql-community-client-plugins mysql-connector-odbc mysql-connector-odbc-dbgsym mysql-connector-odbc-setup mysql-connector-odbc-setup-dbgsym
+
+
+  # CHANGES ---
+
+  # data_encrypted.rds has $value$Driver = "MySQL ODBC 8.1 Unicode Driver"
+  # If the MySQL version installed is bigger, change the number
+
 
 
