@@ -151,7 +151,7 @@ encrypt_data <- function(mysupersecretpassword = NULL, data_unencrypted, output_
 
   #Private key
   key_private <- sodium::sha256(charToRaw(mysupersecretpassword))
-  paste("Private Key:", paste(key_private, collapse = " "))
+  # paste("Private Key:", paste(key_private, collapse = " "))
 
   #Public key
   key_public  <- sodium::pubkey(key_private)
