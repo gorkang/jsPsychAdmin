@@ -1,6 +1,3 @@
-# TODO: show how many participants per condition!!! column "conditions" condA: 1 | condB: 2 | condC: 2
-  # jsPsychAdmin::check_status_participants_protocol()
-
 
 # Install packages --------------------------------------------------------
 
@@ -14,8 +11,27 @@
 #   )
 
 
+# Check available tasks sources -------------------------------------------
 
-# NEW ---------------------------------------------------------------------
+# CHECK missing:
+# - tasks in v6 or v7
+# - prepare_scripts
+# - Info in google docs
+# - docs/
+DF = check_tasks_source("gorkang@gmail.com")
+DT::datatable(DF)
+
+# WHAT TO DO:
+# Copy NA's in jsPsychMaker to jsPsychMaker/canonical_protocol/tasks
+# Search missing jsPsychHelpeR prepare_scripts and copy to jsPsychHelpeR/R_tasks
+# Delete tasks from New Google sheet if they are in both New and canonical
+# Move New to canonical Google sheet when tasks are ready
+# Ask for docs/
+
+
+
+
+# DEBUG ---------------------------------------------------------------------
 
 # Get all parameters of a function (to help DEBUG)
 jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
@@ -39,9 +55,9 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
                                    dont_ask = TRUE
                                    )
 
-# CHECK participants all protocols ----------------------------------------
+# CHECK MySQL participants all protocols ----------------------------------------
 
-  # CHECKS number of completed, discarded and assigned participants for each protocol
+  # CHECKS MySQL database for number of completed, discarded and assigned participants for each protocol
 
   # Does NOT ask for password.
   # Uses the .credentials file + the public key to unlock the encrypted data_encrypted.rds
@@ -50,8 +66,6 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
   OUTPUT$TABLE_clean # This does not include Discarded
   OUTPUT$TOTAL_participants
   # TODO: should also check how many files from how many tasks???
-
-  # TODO: show how many participants per condition!!! column "conditions" condA: 1 | condB: 2 | condC: 2
 
 
 # Clean up a DEV protocol -------------------------------------------------
@@ -63,7 +77,9 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "test/protocols_DEV/999") # Asks for server password
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "999") # Asks for server password
 
-  # For protocols in production after pilots. TO DISCARD EVERYTHING. Creates a zip backup of files, just in case
+  # CAREFUL WITH THIS ---
+  # For protocols in production after pilots. TO DISCARD EVERYTHING.
+  # Creates a zip backup of files, just in case, but the DB is not backed up here. For daily DB backups see jsPsychR/CSCN-server/DB_backups/
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "999", override_DEV_limitation = TRUE) # Asks for server password
 
 
@@ -180,7 +196,13 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = PROTOCOLID)
 
 
-  # 2) LAUNCH MONKEYS
+  # 2) LAUNCH LOCAL MONKEYS
+  jsPsychMonkeys::release_the_monkeys(uid = 1,
+                                      local_folder_tasks = "/home/emrys/Downloads/999/",
+                                      open_VNC = TRUE, disable_web_security = TRUE)
+
+
+  # 2) LAUNCH ONLINE PARALLEL MONKEYS
   jsPsychMonkeys::release_the_monkeys(uid = "1:10",
                                       server_folder_tasks = PROTOCOLID,
                                       sequential_parallel = "parallel",

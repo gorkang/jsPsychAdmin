@@ -400,3 +400,142 @@ get_parameters_of_function <- function(name_function, load_parameters = TRUE) {
 
 
 }
+
+
+#' check_tasks_source
+#'
+#' Checks the different sources of tasks (r package, google sheets with canonical
+#' tasks and google sheets with new tasks), and creates a matrix with all the tasks
+#'
+#' @param gmail_account Gmail account to download the google sheets
+#'
+#' @return
+#' @export
+#'
+#' @examples
+check_tasks_source <- function(gmail_account) {
+
+  googlesheets4::gs4_auth(gmail_account)
+
+
+
+  # Prepare scripts ---------------------------------------------------------
+
+  local_prepare_tasks = here::here(paste0("../jsPsychHelpeR/R_tasks/"))
+  ALL_prepare = unique(gsub("prepare_|\\.R", "", list.files(local_prepare_tasks, pattern = "\\.R$")))
+  BLACKLIST = "Bank|Report|SDG|TEMPLATE|AIM[0-9]{1,3}|DEMOGR[0-9]{1,3}|FORM[0-9]{1,3}|FONDECYT.*"
+
+  DF_prepare =
+    tibble::tibble(tasks = ALL_prepare[!grepl(BLACKLIST, ALL_prepare)]) |>
+    dplyr::mutate(source = "jsPsychHelpeR")
+
+
+  # Docs --------------------------------------------------------------------
+
+  DF_missing_docs =
+    tibble::tibble(tasks = jsPsychAdmin::tasks_missing_docs()) |>
+    dplyr::mutate(source = "docs") |>
+    dplyr::mutate(exists = "missing")
+
+
+  # Google sheets -----------------------------------------------------------
+
+  DF_raw =
+    googlesheets4::read_sheet("1Eo0F4GcmqWZ1cghTpQlA4aHsc8kTABss-HAeimE2IqA", sheet = 2, skip = 0) |>
+    dplyr::transmute(tasks = `Codigo Test`) |>
+    dplyr::filter(!grepl("short_name", tasks)) |>
+    tidyr::drop_na(tasks) |>
+    dplyr::mutate(source = "Gsheet",
+                  exists = "canonical")
+
+  DF_raw_NEW =
+    googlesheets4::read_sheet("1LAsyTZ2ZRP_xLiUBkqmawwnKWgy8OCwq4mmWrrc_rpQ", sheet = 2, skip = 0) |>
+    dplyr::transmute(tasks = `Codigo Test`) |>
+    dplyr::filter(!grepl("SIN espacios", tasks)) |>
+    dplyr::mutate(source = "Gsheet",
+                  exists = "| New")
+
+  DF_gdocs_all =
+    DF_raw |> dplyr::full_join(DF_raw_NEW, by = dplyr::join_by(tasks, source)) |>
+    tidyr::replace_na(list(exists.x = "", exists.y = "")) |>
+    dplyr::mutate(exists = paste0(exists.x, " ", exists.y)) |>
+    dplyr::select(-exists.x, -exists.y)
+
+  # R packages --------------------------------------------------------------
+
+  DF_raw_Rpackage_v6 =
+    jsPsychMaker::list_available_tasks(jsPsych_version = 6) |>
+    tibble::as_tibble() |>
+    dplyr::select(tasks) |>
+    dplyr::mutate(source = "jsPsychMaker") |>
+    dplyr::mutate(exists = "v6")
+
+  DF_raw_Rpackage_v7 =
+    jsPsychMaker::list_available_tasks(jsPsych_version = 7) |>
+    tibble::as_tibble() |>
+    dplyr::select(tasks) |>
+    dplyr::mutate(source = "jsPsychMaker") |>
+    dplyr::mutate(exists = "v7")
+
+  DF_raw_Rpackages =
+    DF_raw_Rpackage_v6 |>
+    dplyr::full_join(DF_raw_Rpackage_v7, by = dplyr::join_by(tasks, source)) |>
+    tidyr::replace_na(list(exists.x = "", exists.y = "")) |>
+    dplyr::mutate(exists = paste0(exists.x, " ", exists.y)) |>
+    dplyr::select(-exists.x, -exists.y)
+
+
+
+# Join all ----------------------------------------------------------------
+
+  DF_output =
+    DF_raw_Rpackages |>
+    dplyr::bind_rows(DF_prepare) |>
+    dplyr::bind_rows(DF_gdocs_all) |>
+    dplyr::bind_rows(DF_missing_docs) |>
+    dplyr::mutate(exists =
+                    dplyr::case_when(
+                      source == "docs" ~ exists,
+                      source == "jsPsychMaker" ~ exists,
+                      source == "Gsheet" ~ exists,
+                      TRUE ~ "available")) |>
+    tidyr::pivot_wider(names_from = source, values_from = exists)
+
+  return(DF_output)
+
+}
+
+
+#' tasks_missing_docs
+#' Show list of tasks missing docs/
+#'
+#' @param FOLDER
+#'
+#' @return
+#' @export
+#'
+#' @examples
+tasks_missing_docs <- function(FOLDER = "~/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/SHARED-docs/docs") {
+
+  # TODO: process_docs in jsPsychMaker can be simplified further improving this function
+
+  # Initial files in jsPsychR/SHARED-docs/docs"
+  INITIAL = tibble::tibble(path_to_file = list.files(FOLDER, recursive = TRUE, full.names = TRUE),
+                           file_short = paste0(basename(dirname(path_to_file)), "/", basename(path_to_file)))
+
+
+  tasks_with_docs = unique(gsub("(.?)_.*", "\\1", tools::file_path_sans_ext(basename(INITIAL$file_short))))
+
+  all_prepare_scripts = gsub("pre|post", "", gsub("^prepare_(.*)\\.R", "\\1", list.files("../jsPsychHelpeR/R_tasks/", pattern = "R$")))
+
+
+  MISSING_raw = unique(all_prepare_scripts[!all_prepare_scripts %in% tasks_with_docs])
+
+  BLACKLIST = "Bank|Consent|ConsentHTML|DEBRIEF|Goodbye|Report|SDG|TEMPLATE|AIM[0-9]{1,3}|DEMOGR[0-9]{0,3}|FORM[0-9]{1,3}|FONDECYT.*"
+
+  MISSING = MISSING_raw[!grepl(BLACKLIST, MISSING_raw)]
+
+  cli::cli_alert_info("{length(MISSING)} tasks missing docs: ")
+
+  return(MISSING)
+}
