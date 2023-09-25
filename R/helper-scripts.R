@@ -418,18 +418,6 @@ check_tasks_source <- function(gmail_account) {
   googlesheets4::gs4_auth(gmail_account)
 
 
-
-  # Prepare scripts ---------------------------------------------------------
-
-  local_prepare_tasks = here::here(paste0("../jsPsychHelpeR/R_tasks/"))
-  ALL_prepare = unique(gsub("prepare_|\\.R", "", list.files(local_prepare_tasks, pattern = "\\.R$")))
-  BLACKLIST = "Bank|Report|SDG|TEMPLATE|AIM[0-9]{1,3}|DEMOGR[0-9]{1,3}|FORM[0-9]{1,3}|FONDECYT.*"
-
-  DF_prepare =
-    tibble::tibble(tasks = ALL_prepare[!grepl(BLACKLIST, ALL_prepare)]) |>
-    dplyr::mutate(source = "jsPsychHelpeR")
-
-
   # Docs --------------------------------------------------------------------
 
   DF_missing_docs =
@@ -448,12 +436,14 @@ check_tasks_source <- function(gmail_account) {
     dplyr::mutate(source = "Gsheet",
                   exists = "canonical")
 
+  example_tasks = c("BART", "CAS", "GHQ12")
   DF_raw_NEW =
     googlesheets4::read_sheet("1LAsyTZ2ZRP_xLiUBkqmawwnKWgy8OCwq4mmWrrc_rpQ", sheet = 2, skip = 0) |>
     dplyr::transmute(tasks = `Codigo Test`) |>
     dplyr::filter(!grepl("SIN espacios", tasks)) |>
     dplyr::mutate(source = "Gsheet",
-                  exists = "| New")
+                  exists = "| New") |>
+    dplyr::filter(!tasks %in% example_tasks)
 
   DF_gdocs_all =
     DF_raw |> dplyr::full_join(DF_raw_NEW, by = dplyr::join_by(tasks, source)) |>
@@ -461,7 +451,13 @@ check_tasks_source <- function(gmail_account) {
     dplyr::mutate(exists = paste0(exists.x, " ", exists.y)) |>
     dplyr::select(-exists.x, -exists.y)
 
-  # R packages --------------------------------------------------------------
+
+  # jsPsychMaker ---------------------------------------------------------
+
+  # Translations available. Avoid showing a row for each translation
+  DICC_equivalent_tasks =
+    tibble::tibble(tasks = c("BNT"),
+                   translation = c("BNTen"))
 
   DF_raw_Rpackage_v6 =
     jsPsychMaker::list_available_tasks(jsPsych_version = 6) |>
@@ -477,20 +473,34 @@ check_tasks_source <- function(gmail_account) {
     dplyr::mutate(source = "jsPsychMaker") |>
     dplyr::mutate(exists = "v7")
 
-  DF_raw_Rpackages =
+  DF_maker =
     DF_raw_Rpackage_v6 |>
     dplyr::full_join(DF_raw_Rpackage_v7, by = dplyr::join_by(tasks, source)) |>
     tidyr::replace_na(list(exists.x = "", exists.y = "")) |>
     dplyr::mutate(exists = paste0(exists.x, " ", exists.y)) |>
-    dplyr::select(-exists.x, -exists.y)
+    dplyr::select(-exists.x, -exists.y) |>
+
+    # Filter out translations
+    dplyr::filter(!tasks %in% DICC_equivalent_tasks$translation)
+
+
+  # jsPsychHelpeR ---------------------------------------------------------
+
+  local_prepare_tasks = here::here(paste0("../jsPsychHelpeR/R_tasks/"))
+  ALL_prepare = unique(gsub("prepare_|\\.R", "", list.files(local_prepare_tasks, pattern = "\\.R$")))
+  BLACKLIST = "TEMPLATE|AIM[0-9]{1,3}|DEMOGR[0-9]{1,3}|FORM[0-9]{1,3}|FONDECYT.*"
+
+  DF_helper =
+    tibble::tibble(tasks = ALL_prepare[!grepl(BLACKLIST, ALL_prepare)]) |>
+    dplyr::mutate(source = "jsPsychHelpeR")
 
 
 
 # Join all ----------------------------------------------------------------
 
   DF_output =
-    DF_raw_Rpackages |>
-    dplyr::bind_rows(DF_prepare) |>
+    DF_maker |>
+    dplyr::bind_rows(DF_helper) |>
     dplyr::bind_rows(DF_gdocs_all) |>
     dplyr::bind_rows(DF_missing_docs) |>
     dplyr::mutate(exists =
@@ -499,7 +509,13 @@ check_tasks_source <- function(gmail_account) {
                       source == "jsPsychMaker" ~ exists,
                       source == "Gsheet" ~ exists,
                       TRUE ~ "available")) |>
-    tidyr::pivot_wider(names_from = source, values_from = exists)
+    tidyr::pivot_wider(names_from = source, values_from = exists) |>
+    dplyr::mutate(notes =
+                    dplyr::case_when(
+                      tasks == "CMA" ~ "CMApre and CMApost",
+                      tasks == "BNT" ~ "translation: BNTen"
+                    )) |>
+    dplyr::arrange(tolower(tasks)) # tolower() to ignore case
 
   return(DF_output)
 

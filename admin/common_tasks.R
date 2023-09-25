@@ -13,13 +13,16 @@
 
 # Check available tasks sources -------------------------------------------
 
+#### IMPORTANT TO KEEP EVERYTHIN IN SYNC ####
+
 # CHECK missing:
 # - tasks in v6 or v7
 # - prepare_scripts
 # - Info in google docs
 # - docs/
-DF = check_tasks_source("gorkang@gmail.com")
-DT::datatable(DF)
+DF_tasks = jsPsychAdmin::check_tasks_source("gorkang@gmail.com")
+DT::datatable(DF_tasks, filter = 'top', options = list(dom = "tip", pageLength = -1, paging = FALSE))
+
 
 # WHAT TO DO:
 # Copy NA's in jsPsychMaker to jsPsychMaker/canonical_protocol/tasks
