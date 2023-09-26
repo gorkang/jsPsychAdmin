@@ -5,7 +5,10 @@
 \title{check_status_participants_protocol
 CHECKS the mysql database and extracts the number of participants completed, discarded and assigned per protocol}
 \usage{
-check_status_participants_protocol()
+check_status_participants_protocol(pid = NULL)
+}
+\arguments{
+\item{pid}{If you want to see a single protocol, enter the protocol id}
 }
 \description{
 check_status_participants_protocol

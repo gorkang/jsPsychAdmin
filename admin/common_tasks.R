@@ -13,7 +13,7 @@
 
 # Check available tasks sources -------------------------------------------
 
-#### IMPORTANT TO KEEP EVERYTHIN IN SYNC ####
+#### IMPORTANT TO KEEP EVERYTHING IN SYNC ####
 
 # CHECK missing:
 # - tasks in v6 or v7
@@ -134,6 +134,11 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
 
 
 # MONKEYS -----------------------------------------------------------------
+
+
+# Clean all monkey's containers -------------------------------------------
+
+  jsPsychMonkeys::clean_monkeys_containers()
 
 
 ## Connect to a running monkey -------------------------------------------

@@ -1,11 +1,13 @@
 #' check_status_participants_protocol
 #' CHECKS the mysql database and extracts the number of participants completed, discarded and assigned per protocol
 #'
+#' @param pid If you want to see a single protocol, enter the protocol id
+#'
 #' @return
 #' @export
 #'
 #' @examples
-check_status_participants_protocol <- function() {
+check_status_participants_protocol <- function(pid = NULL) {
 
   list_credentials = source(here::here(".vault/.credentials"))
   PASSWORD = list_credentials$value$password
@@ -28,24 +30,61 @@ check_status_participants_protocol <- function() {
     # Extract tables using data_unencrypted
     LIST_tables = jsPsychAdmin:::extract_tables(list_credentials = data_unencrypted, serial_parallel = "parallel") # ~7s
 
-    DF_user = LIST_tables$user
+    DF_user_raw = LIST_tables$user
+    DF_experimental_condition_raw = LIST_tables$experimental_condition
 
-    table_conditions = LIST_tables$experimental_condition |>
+    if (!is.null(pid)) {
+      DF_user = DF_user_raw |> dplyr::filter(id_protocol == pid)
+      DF_experimental_condition = DF_experimental_condition_raw |> dplyr::filter(id_protocol == pid)
+    } else {
+      DF_user = DF_user_raw
+      DF_experimental_condition = DF_experimental_condition_raw
+    }
+
+
+    # df_Bayesian31 |> separate(condition_between, sep = "_", into = c("condition_between1", "condition_between2")) |> count(condition_between1, condition_between2, id) |> count(condition_between1, condition_between2)
+
+
+    table_conditions_user_condition =
+      LIST_tables$user_condition |>
+      # filter(id_protocol == 31) |>
+      dplyr::arrange(id_user, id_protocol, id_condition) |>
+      dplyr::select(id_condition, id_user) |>
+      dplyr::left_join(LIST_tables$user |> dplyr::select(id_user, id_protocol, status), by = dplyr::join_by(id_user)) |>
+      dplyr::left_join(LIST_tables$experimental_condition |> dplyr::select(id_condition, task_name, condition_key, condition_name, assigned_task), by = dplyr::join_by(id_condition)) |>
+      dplyr::filter(condition_name != "survey") |>
+      dplyr::group_by(id_protocol, task_name, id_user, status) |> # condition_key, THIS one destroys the combinations
+      dplyr::summarise(condition_name = paste(condition_name, collapse = ", "), .groups = "drop",
+                assigned_task = unique(assigned_task)) |>
+      dplyr::count(id_protocol, task_name, assigned_task, status, condition_name) |>
+      tidyr::pivot_wider(names_from = status, values_from = n) |>
+      tidyr::replace_na(list(completed = 0, discarded = 0, assigned = 0)) |>
+      dplyr::group_by(id_protocol, task_name) |>
+      dplyr::reframe(conditions = paste(paste0(condition_name, ": ", completed, "/", assigned_task, "/", discarded, ""), collapse = ", ")) |>
+      dplyr::mutate(conditions = paste0(task_name, " | ", conditions, "")) |>
+      dplyr::select(-task_name) |>
+      dplyr::rename(user_condition = conditions)
+
+
+
+    # Using table experimental_condition CAN'T KNOW the specific combinations of between variables
+    table_conditions_experimental_condition =
+      DF_experimental_condition |>
       dplyr::select(id_protocol, assigned_task, completed_protocol, task_name, condition_key, condition_name) |>
       dplyr::filter(condition_name != "survey") |>
       dplyr::group_by(id_protocol, task_name, condition_key) |>
-      dplyr::reframe(
-        conditions = paste(paste0(condition_name, ": ", completed_protocol, "/", assigned_task, ""), collapse = ", ")
-      ) |>
+      dplyr::reframe(conditions = paste(paste0(condition_name, ": ", completed_protocol, "/", assigned_task, ""), collapse = ", ")) |>
       dplyr::mutate(conditions = paste0(condition_key, " {", conditions, "}")) |>
       dplyr::group_by(id_protocol, task_name) |>
       dplyr::reframe(conditions = paste(conditions, collapse = "; ")) |>
       dplyr::mutate(conditions = paste0(task_name, " | ", conditions, "")) |>
-      dplyr::select(-task_name)
+      dplyr::select(-task_name) |>
+      dplyr::rename(experimental_condition = conditions)
 
     # TODO: experimental_condition DONT have discarded. Can get there joining user_condition, DF_user and experimental_condition
 
-    STATUS_BY_CONDITION = DF_user |> dplyr::select(id_protocol, id_user, status) |>
+    STATUS_BY_CONDITION = DF_user |>
+      dplyr::select(id_protocol, id_user, status) |>
       dplyr::left_join(
         LIST_tables$user_condition |> dplyr::select(id_protocol, id_user, id_condition),
         by = c("id_protocol", "id_user")) |>
@@ -59,21 +98,29 @@ check_status_participants_protocol <- function() {
                                        discarded = 0,
                                        assigned = 0))
 
-    DF_table_clean = DF_user |>
+    DF_template = tibble::tibble(id_protocol = NA_integer_, completed = NA_integer_, discarded = NA_integer_, assigned = NA_integer_)
+    DF_table_clean =
+      DF_user |>
       dplyr::group_by(id_protocol) |>
       dplyr::count(status) |>
       tidyr::pivot_wider(names_from = status, values_from = n) |>
+      dplyr::bind_rows(DF_template) |>
       tidyr::replace_na(replace = list(completed = 0,
                                        discarded = 0,
                                        assigned = 0)) |>
-      dplyr::left_join(table_conditions, by = "id_protocol")
+      # dplyr::left_join(table_conditions, by = "id_protocol") |>
+      dplyr::left_join(table_conditions_user_condition, by = "id_protocol") |>
+      dplyr::left_join(table_conditions_experimental_condition, by = "id_protocol") |>
+      tidyr::drop_na(id_protocol)
 
   }
 
 
-  TABLE_clean = DF_table_clean |> gt::gt(groupname_col = NA) |>
+  TABLE_clean = DF_table_clean |>
+    gt::gt(groupname_col = NA) |>
     gt::sub_missing(columns = 1:5,
-      missing_text = "survey")
+      missing_text = "survey") |>
+    gt::tab_caption(caption = gt::md("Columns **user_condition** and **experimental_condition** are created using those MySQL tables. With experimental_condition number of completed do not match and can´t get discarded." ))
 
   # Total online participants in MySQL DB
   TOTAL_participants =
