@@ -222,12 +222,12 @@ set_permissions_google_drive <- function(pid, email_IP) {
     if (!email_IP %in% DF_permissions$email) {
 
       # Change permissions for email_IP
-      ID |>
-        googledrive::drive_share(
-          role = "reader",
-          type = "user",
-          emailAddress = email_IP,
-          emailMessage = paste0("La carpeta de datos del proyecto ", pid, " ha sido compartida contigo. Si es un error o tienes alguna duda, avisa a gorkang@gmail.com")
+      googledrive::drive_share(
+        file = ID,
+        role = "reader",
+        type = "user",
+        emailAddress = email_IP,
+        emailMessage = paste0("La carpeta de datos del proyecto ", pid, " ha sido compartida contigo. Si es un error o tienes alguna duda, avisa a gorkang@gmail.com")
         )
       cli::cli_alert_success("Granted View permissions to {email_IP}")
 
