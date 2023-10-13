@@ -227,18 +227,18 @@ set_permissions_google_drive <- function(pid, email_IP) {
         role = "reader",
         type = "user",
         emailAddress = email_IP,
-        emailMessage = paste0("La carpeta de datos del proyecto ", pid, " ha sido compartida contigo. Si es un error o tienes alguna duda, avisa a gorkang@gmail.com")
+        emailMessage = paste0("La carpeta de datos del proyecto ", pid, " ha sido compartida contigo. Si es un error o tienes alguna duda, puedes escribir a gorkang@gmail.com")
         )
-      cli::cli_alert_success("Granted View permissions to {email_IP}")
+      cli::cli_alert_success("pid {pid}: {.email {email_IP}} | Granted View permissions")
 
       # email_IP already has permissions
     } else {
-      cli::cli_alert_info("{email_IP} already has permissions")
+      cli::cli_alert_info("pid {pid}: {.email {email_IP}} | Already has View permissions")
     }
 
     # Admins
   } else {
-    cli::cli_alert_info("{email_IP} is an ADMIN and already has permissions")
+    cli::cli_alert_info("pid {pid}: {.email {email_IP}} | Already has View permissions (ADMIN)")
   }
 
 }
