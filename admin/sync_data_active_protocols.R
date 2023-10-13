@@ -134,7 +134,7 @@ PIDs =
     Sys.sleep(5) # Give some time to sync changes to google drive
 
     # Downloads data and ADDS to the zip data
-    cli::cli_h2("Downloading data for project {PIDs[.x]}")
+    cli::cli_h2("Downloading data")
 
     # Tempdir to unzip and get files
     OUTPUT_folder = paste0(tempdir(), "/ZIP", PIDs[.x])
@@ -233,7 +233,7 @@ cli::cli_h1("CHECK permissions")
 1:length(PIDs) |>
   purrr::walk( ~ {
 
-    cli::cli_h3("Check permissions for pid: {PIDs[.x]}")
+    # cli::cli_h3("Check permissions for pid: {PIDs[.x]}")
 
     DF_permisos = DF_resumen_clean |> dplyr::filter(ID == PIDs[.x])
 
