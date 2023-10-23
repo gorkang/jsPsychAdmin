@@ -246,6 +246,7 @@ delete_MySQL_tables_pid <- function(pid) {
     DBI::dbGetQuery(db_con, sprintf("delete from user_task where id_protocol=@PID;"))
     DBI::dbGetQuery(db_con, sprintf("delete from task where id_protocol=@PID;"))
     DBI::dbGetQuery(db_con, sprintf("delete from protocol where id_protocol=@PID;"))
+    DBI::dbGetQuery(db_con, sprintf("delete from combination_between where id_protocol=@PID;"))
 
     cli::cli_alert_success("Tables deleted for pid {pid}")
 
