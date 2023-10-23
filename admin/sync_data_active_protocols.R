@@ -230,6 +230,8 @@ PIDs =
 
 cli::cli_h1("CHECK permissions")
 
+set_permissions_google_drive_safely = purrr::quietly(purrr::safely(jsPsychAdmin::set_permissions_google_drive))
+
 1:length(PIDs) |>
   purrr::walk( ~ {
 
@@ -244,7 +246,13 @@ cli::cli_h1("CHECK permissions")
 
       # TODO: Use safer/quieter version of functions and check if errors or warnings
       # Set permissions, only if not ADMIN and does not already have permissions
-      jsPsychAdmin::set_permissions_google_drive(pid = DF_permisos$ID, email_IP = trimws(DF_permisos$contacto))
+      # jsPsychAdmin::set_permissions_google_drive(pid = DF_permisos$ID, email_IP = trimws(DF_permisos$contacto))
+      OUT = set_permissions_google_drive_safely(pid = DF_permisos$ID, email_IP = trimws(DF_permisos$contacto))
+
+      if (!is.null(OUT$result$error)) cli::cli_alert_danger(OUT$result$error)
+      if (length(OUT$warnings) != 0) cli::cli_alert_warning(OUT$warnings)
+      if (!is.null(OUT$messages)) cli::cli_alert_info(OUT$messages)
+
 
     } else {
       cli::cli_alert_danger("pid {PIDs[.x]}: {DF_permisos$contacto} does NOT look like a proper email")
