@@ -89,6 +89,14 @@ jsPsychHelpeR::sync_server_local(server_folder = "../../../../../DB_dumps/",
 
 
 
+# Copy canonical_clean from Github to server ------------------------------
+
+# Copies canonical clean Github to the server
+# This SHOULD BE THE ONLY WAY WE UPDATE THE SERVER canonical_clean
+
+jsPsychAdmin::copy_canonical_clean_from_Github_to_server(jsPsych_version = 6, silent = TRUE)
+
+
 
 # Sources and parameters --------------------------------------------------
 

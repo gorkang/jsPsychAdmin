@@ -556,3 +556,109 @@ tasks_missing_docs <- function(FOLDER = "~/gorkang@gmail.com/RESEARCH/PROYECTOS-
 
   return(MISSING)
 }
+
+
+
+
+#' download_canonical_clean
+#' Clones from https://github.com/gorkang/jsPsychMaker the canonical_clean folder
+#'
+#' @param destination_folder Where to download the canonical_clean folder
+#' @param jsPsych_version jsPsych version (6 or 7)
+#' @param silent Do not show messages TRUE/FALSE
+#'
+#' @return
+#' @export
+#'
+#' @examples
+download_canonical_clean <- function(destination_folder, jsPsych_version = 6, silent = TRUE) {
+
+  # Prepare temp folder paths
+  temp_folder = paste0(tempdir(check = TRUE), "/", basename(destination_folder), "/")
+  temp_folder_maker = paste0(temp_folder, "/jsPsychMaker")
+  canonical_version = paste0("canonical_clean_", jsPsych_version)
+
+  if (silent == FALSE) cli::cli_alert_info("Downloading {.code {canonical_version}} from Github...")
+
+  # Create temp folder
+  if (!dir.exists(temp_folder)) dir.create(temp_folder, recursive = TRUE)
+
+  # Check destination folder exists and does not contain canonical_version
+  if (!dir.exists(destination_folder)) {
+    dir.create(destination_folder, recursive = TRUE)
+  } else {
+    folders_destination = basename(list.dirs(destination_folder, recursive = FALSE))
+    if (canonical_version %in% folders_destination) {
+      cli::cli_abort("{.code {destination_folder}/{canonical_version}/} already exists. Not sure if it is up to date. Delete it or change destination_folder before trying again")
+    }
+  }
+
+
+  # Set wd in temp folder. Clone the canonical_clean folder. Clean up
+  # https://stackoverflow.com/a/52269934/1873521
+  WD = getwd()
+  setwd(temp_folder)
+  system2(command = "git", args = c("clone", "-n", "--depth=1", "--filter=tree:0", "https://github.com/gorkang/jsPsychMaker"), stdout = FALSE, stderr = FALSE)
+  setwd(temp_folder_maker)
+  system(paste0("git sparse-checkout set --no-cone ", canonical_version))
+  system2(command = "git", args = "checkout", stdout = FALSE, stderr = FALSE)
+  fs::dir_copy(path = ".", new_path = destination_folder)
+  unlink(temp_folder_maker, recursive = TRUE)
+  unlink(paste0(destination_folder, "/.git"), recursive = TRUE)
+  setwd(WD)
+
+  if (silent == FALSE) cli::cli_alert_success("{.code {canonical_version}} created in {.code {destination_folder}}")
+}
+
+
+
+#' copy_canonical_clean_from_Github_to_server
+#'
+#' @param jsPsych_version 6 or 7
+#' @param silent do not show messages FALSE/TRUE
+#'
+#' @return
+#' @export
+#'
+#' @examples
+copy_canonical_clean_from_Github_to_server <- function(jsPsych_version = 6, silent = FALSE) {
+
+  canonical_clean_version = paste0("canonical_clean_", jsPsych_version)
+
+  # Download Github canonical_clean
+  OUT_canonical = paste0(tempdir(check = TRUE), "/Github/")
+  jsPsychAdmin::download_canonical_clean(destination_folder = OUT_canonical, jsPsych_version = jsPsych_version, silent = silent)
+
+  # Prepare folder
+  server_folder = paste0("test/", canonical_clean_version, "/")
+
+  # CS of server canonical_clean
+  jsPsychHelpeR::get_zip(pid = server_folder,
+                         what = "protocol",
+                         where = "/home/emrys/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/CSCN-server/canonical_clean_backups/",
+                         file_name =  paste0(Sys.Date(), "_SERVER_", canonical_clean_version, ".zip"),
+                         ignore_existing = FALSE, all_messages = !silent, dont_ask = TRUE)
+
+  cli::cli_alert_success("CS of SERVER {canonical_clean_version} copied to `CSCN-server/canonical_clean_backups`")
+
+
+
+
+  # Sync to server
+  OUT_canonical_final = paste0(OUT_canonical, "/", canonical_clean_version, "/")
+
+  jsPsychHelpeR::sync_server_local(
+    direction = "local_to_server",
+    local_folder = OUT_canonical_final,
+    server_folder = server_folder,
+    only_test = FALSE,
+    exclude_csv = TRUE,
+    ignore_existing = FALSE,
+    delete_nonexistent = TRUE,
+    dont_ask = TRUE,
+    all_messages = FALSE
+  )
+
+  cli::cli_alert_success("Github {canonical_clean_version} copied to server")
+
+}
