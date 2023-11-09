@@ -48,6 +48,8 @@
 
 # CHECK Secrets exist -----------------------------------------------------
 
+cli::cli_h1("CHECK secrets")
+
 # Checks the .secrets_mysql.php exists on CSCN server. Writes a file in ~/Downloads
 # source(here::here("admin/helper-scripts-admin.R"))
 jsPsychAdmin::CHECK_secrets_OK(path_to_credentials = "/home/emrys/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/jsPsychHelpeR/")
@@ -55,6 +57,8 @@ jsPsychAdmin::CHECK_secrets_OK(path_to_credentials = "/home/emrys/gorkang@gmail.
 
 
 # Sync CSCN-server --------------------------------------------------------
+
+cli::cli_h1("SYNC CSCN-server")
 
 # Syncs all protocols without data from https://cscn.uai.cl/lab/public/instruments/protocols/ to  ../CSCN-server/
 jsPsychHelpeR::sync_server_local(server_folder = "",
@@ -69,6 +73,8 @@ jsPsychHelpeR::sync_server_local(server_folder = "",
 
 
 # Backup MySQL DB ---------------------------------------------------------
+
+cli::cli_h1("BACKUP MySQL")
 
 # Creates full backup of MySQL DB in user-cscn/apps/uai-cscn/DB_dumps/
 jsPsychAdmin:::backup_MySQL_DB()
@@ -91,6 +97,8 @@ jsPsychHelpeR::sync_server_local(server_folder = "../../../../../DB_dumps/",
 
 # Copy canonical_clean from Github to server ------------------------------
 
+cli::cli_h1("BACKUP canonical_clean_6")
+
 # Copies canonical clean Github to the server
 # This SHOULD BE THE ONLY WAY WE UPDATE THE SERVER canonical_clean
 
@@ -98,7 +106,11 @@ jsPsychAdmin::copy_canonical_clean_from_Github_to_server(jsPsych_version = 6, si
 
 
 
+
 # Sources and parameters --------------------------------------------------
+
+cli::cli_h1("PROCESS all active protocols")
+
 
 output_formats = c("csv", "csv2") # csv2 for Spanish locale csv
 
