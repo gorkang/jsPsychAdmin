@@ -30,13 +30,15 @@ extract_tables <- function(list_credentials = NULL, serial_parallel = "serial") 
 
   cli::cli_h1("Extracting tables")
 
+    tables = c("experimental_condition", "user", "user_condition", "user_task", "task", "protocol", "combination_between")
+
+
   if (serial_parallel == "serial") {
 
     tictoc::tic()
 
     con = openDBconnection(list_credentials)
 
-    tables = c("experimental_condition", "user", "user_condition", "user_task", "task", "protocol")
     cli::cli_progress_bar("Extracting tables", total = length(tables), .envir = .GlobalEnv)
     # purrr::walk(tables, get_table_safely, con = con)
     LIST_tables =
@@ -55,8 +57,6 @@ extract_tables <- function(list_credentials = NULL, serial_parallel = "serial") 
     tictoc::tic()
 
     # con = openDBconnection(list_credentials)
-
-      tables = c("experimental_condition", "user", "user_condition", "user_task", "task", "protocol")
       options(future.rng.onMisuse = "ignore")
       future::plan(future::multisession, workers = length(tables))
 

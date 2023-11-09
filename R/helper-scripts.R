@@ -36,8 +36,9 @@ DELETE_data_server <- function(pid = NULL) {
 
   list_credentials = source(".vault/.credentials") # Get server credentials
   folder_to_delete = paste0(pid, '/.data/')
+  FOLDER_server = gsub("/srv/users/user-cscn/apps/uai-cscn/public/", "", list_credentials$value$main_FOLDER)
 
-  cli::cli_alert_info("Checking files in {.pkg https://cscn.uai.cl/lab/public/instruments/protocols/{folder_to_delete}}. This can take a while...")
+  cli::cli_alert_info("Checking files in {.pkg https://cscn.uai.cl/{FOLDER_server}{folder_to_delete}}. This can take a while...")
 
   FILES_in_folder =
     suppressWarnings(

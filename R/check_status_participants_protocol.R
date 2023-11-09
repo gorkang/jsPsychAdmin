@@ -32,35 +32,51 @@ check_status_participants_protocol <- function(pid = NULL) {
 
     DF_user_raw = LIST_tables$user
     DF_experimental_condition_raw = LIST_tables$experimental_condition
+    DF_combination_between_raw = LIST_tables$combination_between
 
     if (!is.null(pid)) {
       DF_user = DF_user_raw |> dplyr::filter(id_protocol == pid)
       DF_experimental_condition = DF_experimental_condition_raw |> dplyr::filter(id_protocol == pid)
+      DF_combination_between = DF_combination_between_raw |> dplyr::filter(id_protocol == pid)
     } else {
       DF_user = DF_user_raw
       DF_experimental_condition = DF_experimental_condition_raw
+      DF_combination_between = DF_combination_between_raw
     }
 
 
     # df_Bayesian31 |> separate(condition_between, sep = "_", into = c("condition_between1", "condition_between2")) |> count(condition_between1, condition_between2, id) |> count(condition_between1, condition_between2)
 
+    # DF_experimental_condition |> dplyr::filter(id_protocol == 320)
+    # DF_user |> dplyr::filter(id_protocol == 320) |> dplyr::count(status)
+    # DF_combination_between |> dplyr::filter(id_protocol == 320) |> dplyr::count(combination, assigned)
+
+    # DF_combination_between |>
+    #   dplyr::left_join(LIST_tables$user, by = dplyr::join_by(id_user, id_protocol)) |>
+    #   dplyr::count(id_protocol, combination, status) |>
+    #   tidyr::pivot_wider(names_from = status, values_from = n) |>
+    #   tidyr::replace_na(list(completed = 0, discarded = 0, assigned = 0)) |>
+    #   dplyr::group_by(id_protocol) |>
+    #   dplyr::reframe(conditions = paste(paste0(combination, ": ", unique(completed), "/" , unique(assigned),  "/", unique(discarded), ""), collapse = ", ")) |>
+    #   dplyr::mutate(conditions = paste0(" | ", conditions, "")) |>
+    #   dplyr::rename(user_condition = conditions)
 
     table_conditions_user_condition =
       LIST_tables$user_condition |>
-      # filter(id_protocol == 31) |>
+      # dplyr::filter(id_protocol == 320) |>
       dplyr::arrange(id_user, id_protocol, id_condition) |>
       dplyr::select(id_condition, id_user) |>
       dplyr::left_join(LIST_tables$user |> dplyr::select(id_user, id_protocol, status), by = dplyr::join_by(id_user)) |>
-      dplyr::left_join(LIST_tables$experimental_condition |> dplyr::select(id_condition, task_name, condition_key, condition_name, assigned_task), by = dplyr::join_by(id_condition)) |>
+      dplyr::left_join(LIST_tables$experimental_condition |> dplyr::select(id_condition, task_name, condition_key, condition_name), by = dplyr::join_by(id_condition)) |>
       dplyr::filter(condition_name != "survey") |>
       dplyr::group_by(id_protocol, task_name, id_user, status) |> # condition_key, THIS one destroys the combinations
-      dplyr::summarise(condition_name = paste(condition_name, collapse = ", "), .groups = "drop",
-                assigned_task = unique(assigned_task)) |>
-      dplyr::count(id_protocol, task_name, assigned_task, status, condition_name) |>
+      dplyr::arrange(condition_name) |> # Avoid repetitions because of different order
+      dplyr::reframe(condition_name = paste(condition_name, collapse = ", "), .groups = "drop") |>
+      dplyr::count(id_protocol, task_name, status, condition_name) |>
       tidyr::pivot_wider(names_from = status, values_from = n) |>
       tidyr::replace_na(list(completed = 0, discarded = 0, assigned = 0)) |>
       dplyr::group_by(id_protocol, task_name) |>
-      dplyr::reframe(conditions = paste(paste0(condition_name, ": ", completed, "/", assigned_task, "/", discarded, ""), collapse = ", ")) |>
+      dplyr::reframe(conditions = paste(paste0(condition_name, ": ", completed, "/", assigned, "/", discarded, ""), collapse = ", ")) |>
       dplyr::mutate(conditions = paste0(task_name, " | ", conditions, "")) |>
       dplyr::select(-task_name) |>
       dplyr::rename(user_condition = conditions)
@@ -83,7 +99,8 @@ check_status_participants_protocol <- function(pid = NULL) {
 
     # TODO: experimental_condition DONT have discarded. Can get there joining user_condition, DF_user and experimental_condition
 
-    STATUS_BY_CONDITION = DF_user |>
+    STATUS_BY_CONDITION =
+      DF_user |>
       dplyr::select(id_protocol, id_user, status) |>
       dplyr::left_join(
         LIST_tables$user_condition |> dplyr::select(id_protocol, id_user, id_condition),

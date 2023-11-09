@@ -1,14 +1,14 @@
 
 # Install packages --------------------------------------------------------
 
-# renv::install(
-#   packages = c(
-#     "gorkang/jsPsychHelpeR",
-#     "gorkang/jsPsychMonkeys",
-#     "gorkang/jsPsychMaker",
-#     "gorkang/jsPsychAdmin"
-#     )
-#   )
+pak::pkg_install(
+  pkg = c(
+    "gorkang/jsPsychHelpeR",
+    "gorkang/jsPsychMonkeys",
+    "gorkang/jsPsychMaker",
+    "gorkang/jsPsychAdmin"
+    )
+  )
 
 
 # Check available tasks sources -------------------------------------------
@@ -116,8 +116,8 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
   # UPLOAD
   jsPsychHelpeR::sync_server_local(
     direction = "local_to_server",
-    local_folder = "../jsPsychMaker/protocols_DEV/22/",
-    server_folder = "test/protocols_DEV/22/",
+    local_folder = "../jsPsychMaker/protocols_DEV/999/",
+    server_folder = "test/protocols_DEV/999/",
     only_test = FALSE,
     delete_nonexistent = TRUE
   )
@@ -159,6 +159,19 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
 
 
 
+## Get data ----------------------------------------------------------------
+
+  # file.remove("~/Downloads/jsPsychHelpeR-999/data/999.zip")
+
+  jsPsychHelpeR::get_zip(pid = "999",
+                         what = "data",
+                         where = "~/Downloads/jsPsychHelpeR-999/data/")
+
+
+
+
+
+
 # COMBOS ------------------------------------------------------------------
 
 
@@ -195,30 +208,33 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
 
 ## Clean server & Launch Monkeys -------------------------------------------
 
-  PROTOCOLID = "test/protocols_DEV/31" # Debe estar en test/protocols_DEV/!!! o ser 999
+  PROTOCOLID = "test/protocols_DEV/320" # Debe estar en test/protocols_DEV/!!! o ser 999
   pid = gsub("test/protocols_DEV/", "", PROTOCOLID)
   cli::cli_h1("PROTOCOL {pid}")
 
   # 1) Clean data and MySQL DB
-  # rstudioapi::navigateToFile(".vault/.credentials")
+  rstudioapi::navigateToFile(".vault/.credentials")
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = PROTOCOLID)
 
 
   # 2) LAUNCH LOCAL MONKEYS
-  jsPsychMonkeys::release_the_monkeys(uid = 1,
+  jsPsychMonkeys::release_the_monkeys(uid = 15555,
                                       local_folder_tasks = "/home/emrys/Downloads/999/",
                                       open_VNC = TRUE, disable_web_security = TRUE)
 
 
   # 2) LAUNCH ONLINE PARALLEL MONKEYS
-  jsPsychMonkeys::release_the_monkeys(uid = "1:10",
+  jsPsychMonkeys::release_the_monkeys(uid = "205",
                                       server_folder_tasks = PROTOCOLID,
-                                      sequential_parallel = "parallel",
-                                      number_of_cores = 10,
+                                      sequential_parallel = "sequential",
+                                      number_of_cores = 20,
                                       big_container = TRUE,
                                       keep_alive = FALSE, open_VNC = FALSE, screenshot = FALSE,
                                       credentials_folder = here::here(".vault/"))
 
+  # Check DB
+  OUTPUT = jsPsychAdmin::check_status_participants_protocol(pid = 320)
+  OUTPUT$STATUS_BY_CONDITION |> dplyr::filter(id_protocol == 320)
 
 
 
