@@ -269,7 +269,15 @@ set_permissions_google_drive_safely = purrr::quietly(purrr::safely(jsPsychAdmin:
       # jsPsychAdmin::set_permissions_google_drive(pid = DF_permisos$ID, email_IP = trimws(DF_permisos$contacto))
       OUT = set_permissions_google_drive_safely(pid = DF_permisos$ID, email_IP = trimws(DF_permisos$contacto))
 
-      if (!is.null(OUT$result$error)) cli::cli_alert_danger(OUT$result$error)
+      if (!is.null(OUT$result$error)) {
+
+        # If there are ERRORS, show alert and store in file
+        cli::cli_alert_danger("ERROR in pid {DF_permisos$ID}: {DF_permisos$contacto} {OUT$result$error}")
+        clean_ERROR = gsub("\\'", "", OUT$result$error)
+        ERROR_string = glue::glue("--------------- {Sys.Date()} ---------------\n\n{length(OUT$warnings)} ERROR in pid {DF_permisos$ID}: {DF_permisos$contacto} \n\n {clean_ERROR}\n\n\n")
+        system(paste0("printf '%s\n' '", ERROR_string, "'  >> ~/Downloads/pid_", PIDs[.x], "_", length(OUT$result$error), "_ERRORS_permissions.txt"))
+
+      }
       if (length(OUT$warnings) != 0) cli::cli_alert_warning(OUT$warnings)
       if (!is.null(OUT$messages)) cli::cli_alert_info(OUT$messages)
 
@@ -279,3 +287,6 @@ set_permissions_google_drive_safely = purrr::quietly(purrr::safely(jsPsychAdmin:
     }
 
   })
+
+
+cli::cli_h1("END of sync_data_active_protocols.R")

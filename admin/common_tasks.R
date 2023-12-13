@@ -146,6 +146,19 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
   jsPsychMonkeys::reconnect_to_VNC(container_name = "monkey_90")
 
 
+## Run single monkey ------------------------------------------------------
+
+  jsPsychMonkeys::release_the_monkeys(uid = "1",
+                                      sequential_parallel =  "sequential",
+                                      open_VNC = TRUE,
+                                      local_folder_tasks = "~/Downloads/canonical_protocol/",
+                                      keep_alive = TRUE,
+                                      disable_web_security = TRUE,
+                                      debug_file = TRUE,
+                                      console_logs = TRUE)
+
+
+
 # HELPER ------------------------------------------------------------------
 
 
