@@ -3,6 +3,7 @@
 .RData
 .Ruserdata
 .vault/.credentials
+.vault/.credentials_old_path
 .vault/SERVER_PATH.R
 .vault/data_encrypted.rds
 dev/

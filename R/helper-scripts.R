@@ -560,7 +560,7 @@ tasks_missing_docs <- function(FOLDER = "~/gorkang@gmail.com/RESEARCH/PROYECTOS-
 
 
 
-#' download_canonical_clean
+#' download_canonical_clean_Github
 #' Clones from https://github.com/gorkang/jsPsychMaker the canonical_clean folder
 #'
 #' @param destination_folder Where to download the canonical_clean folder
@@ -571,11 +571,11 @@ tasks_missing_docs <- function(FOLDER = "~/gorkang@gmail.com/RESEARCH/PROYECTOS-
 #' @export
 #'
 #' @examples
-download_canonical_clean <- function(destination_folder, jsPsych_version = 6, silent = TRUE) {
+download_canonical_clean_Github <- function(destination_folder, jsPsych_version = 6, silent = TRUE) {
 
   # Prepare temp folder paths
   temp_folder = paste0(tempdir(check = TRUE), "/", basename(destination_folder), "/")
-  temp_folder_maker = paste0(temp_folder, "/jsPsychMaker")
+  temp_folder_maker = paste0(temp_folder, "jsPsychMaker")
   canonical_version = paste0("canonical_clean_", jsPsych_version)
 
   if (silent == FALSE) cli::cli_alert_info("Downloading {.code {canonical_version}} from Github...")
@@ -627,10 +627,11 @@ copy_canonical_clean_from_Github_to_server <- function(jsPsych_version = 6, sile
 
   # Download Github canonical_clean
   OUT_canonical = paste0(tempdir(check = TRUE), "/Github/")
-  jsPsychAdmin::download_canonical_clean(destination_folder = OUT_canonical, jsPsych_version = jsPsych_version, silent = silent)
+  jsPsychAdmin::download_canonical_clean_Github(destination_folder = OUT_canonical, jsPsych_version = jsPsych_version, silent = silent)
 
   # Prepare folder
-  server_folder = paste0("test/", canonical_clean_version, "/")
+  # server_folder = paste0("test/", canonical_clean_version, "/")
+  server_folder = paste0("../protocols_DEV/", canonical_clean_version, "/")
 
   # CS of server canonical_clean
   jsPsychHelpeR::get_zip(pid = server_folder,

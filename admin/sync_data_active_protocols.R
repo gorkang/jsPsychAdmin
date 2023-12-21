@@ -53,14 +53,15 @@ cli::cli_h1("CHECK secrets")
 # Checks the .secrets_mysql.php exists on CSCN server. Writes a file in ~/Downloads
 # source(here::here("admin/helper-scripts-admin.R"))
 jsPsychAdmin::CHECK_secrets_OK(path_to_credentials = "/home/emrys/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/jsPsychHelpeR/")
-
+# TODO: Adapt to new path
 
 
 # Sync CSCN-server --------------------------------------------------------
+  # Syncs all protocols (without data)
 
 cli::cli_h1("SYNC CSCN-server")
 
-# Syncs all protocols without data from https://cscn.uai.cl/lab/public/instruments/protocols/ to  ../CSCN-server/
+# https://cscn.uai.cl/lab/protocols/ to  ../CSCN-server/protocols/
 jsPsychHelpeR::sync_server_local(server_folder = "",
                                  local_folder = here::here(paste0("..", "/CSCN-server/protocols/")),
                                  direction = "server_to_local",
@@ -69,6 +70,30 @@ jsPsychHelpeR::sync_server_local(server_folder = "",
                                  delete_nonexistent = TRUE,
                                  ignore_existing = FALSE, # Important to overwrite files that already existed and changed
                                  dont_ask = TRUE)
+
+# https://cscn.uai.cl/lab/protocols_DEV/ to  ../CSCN-server/protocols_DEV/
+jsPsychHelpeR::sync_server_local(server_folder = "../protocols_DEV/",
+                                 local_folder = here::here(paste0("..", "/CSCN-server/protocols_DEV/")),
+                                 direction = "server_to_local",
+                                 only_test = FALSE,
+                                 exclude_csv = TRUE, # DO NOT INCLUDE DATA
+                                 delete_nonexistent = TRUE,
+                                 ignore_existing = FALSE, # Important to overwrite files that already existed and changed
+                                 dont_ask = TRUE)
+
+
+
+# from OLD PATH https://cscn.uai.cl/lab/public/instruments/protocols/ to  ../CSCN-server/protocols_old_path/
+jsPsychHelpeR::sync_server_local(server_folder = "",
+                                 local_folder = here::here(paste0("..", "/CSCN-server/protocols_old_path/")),
+                                 direction = "server_to_local",
+                                 only_test = FALSE,
+                                 exclude_csv = TRUE, # DO NOT INCLUDE DATA
+                                 delete_nonexistent = TRUE,
+                                 ignore_existing = FALSE, # Important to overwrite files that already existed and changed
+                                 dont_ask = TRUE,
+                                 list_credentials = source(".vault/.credentials_old_path"))
+
 
 
 
@@ -83,7 +108,7 @@ jsPsychAdmin:::backup_MySQL_DB()
 Sys.sleep(30)
 
 # Copy server MySQL backups to local folder
-jsPsychHelpeR::sync_server_local(server_folder = "../../../../../DB_dumps/",
+jsPsychHelpeR::sync_server_local(server_folder = "../../../DB_dumps/",
                                  local_folder = here::here(paste0("..", "/CSCN-server/DB_backups/")),
                                  direction = "server_to_local",
                                  only_test = FALSE,
@@ -141,6 +166,14 @@ PIDs =
 1:length(PIDs) |>
   purrr::walk( ~ {
 
+    # From pid 38 onward, use the credentials pointing to the new path in the folder
+    if (PIDs[.x] > 37) {
+      credentials_file = ".vault/.credentials"
+    } else {
+      credentials_file = ".vault/.credentials_old_path"
+    }
+
+
     # .x = 1
     cli::cli_h1("Project {PIDs[.x]}")
 
@@ -171,7 +204,14 @@ PIDs =
     }
 
     # Sync files to tempdir. We use tempdir_location = OUTPUT_folder so only new files will be downloaded
-    jsPsychHelpeR::get_zip(pid = PIDs[.x], what = "data", ignore_existing = TRUE, all_messages = FALSE, tempdir_location = OUTPUT_folder)
+    jsPsychHelpeR::get_zip(
+      pid = PIDs[.x],
+      what = "data",
+      ignore_existing = TRUE,
+      all_messages = FALSE,
+      tempdir_location = OUTPUT_folder,
+      list_credentials = source(credentials_file)
+    )
 
     # If case the zip did not exist before, now it should (if they were files)
     if (!file.exists(zip_name)) zip_name = here::here(paste0("../SHARED-data/", PIDs[.x], "/", PIDs[.x], ".zip"))
@@ -211,16 +251,19 @@ PIDs =
 
             # Copy processed files to destination folder
             cli::cli_h2("Copy output processed files for project {PIDs[.x]}")
-            FILES_processed = list.files(here::here("outputs/data/"), full.names = TRUE, pattern = "DF_clean|DF_raw")
+
             destination = paste0(dirname(zip_name), "/processed/")
             if (!dir.exists(destination)) dir.create(destination)
-            file.copy(from = FILES_processed, to = paste0(destination, basename(FILES_processed)), overwrite = TRUE)
-            file.remove(FILES_processed)
+
+            # No need to do this, we directly create the zip in the next step
+            # FILES_processed = list.files(here::here("outputs/data/"), full.names = TRUE, pattern = "DF_clean|DF_raw")
+            # file.copy(from = FILES_processed, to = paste0(destination, basename(FILES_processed)), overwrite = TRUE)
+            # file.remove(FILES_processed)
 
             # Create zip with process data
-            jsPsychHelpeR::zip_files(folder_files = destination,
+            jsPsychHelpeR::zip_files(folder_files = here::here("outputs/data/"),
                       zip_name = paste0(destination, "", "processed.zip"),
-                      remove_files = TRUE)
+                      remove_files = FALSE)
           } else {
             # If there are ERRORS, show alert and store in file
             cli::cli_alert_danger("{length(DF_clean$result$error$message)} ERRORS in pid = {PIDs[.x]} \n\n {DF_clean$result$error}")
