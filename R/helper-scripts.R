@@ -103,7 +103,10 @@ DELETE_data_server <- function(pid = NULL) {
 #' @export
 #'
 #' @examples
-CHECK_secrets_OK <- function(path_to_secrets = "../../../../../", path_to_credentials = "") {
+CHECK_secrets_OK <- function(path_to_secrets = "../../../", path_to_credentials = "") {
+
+  # OLD PATH
+  # path_to_secrets = "../../../../../"
 
   # CHECKS  ---
   if (is.null(path_to_secrets)) cli::cli_abort("path_to_secrets needs a value")
