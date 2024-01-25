@@ -77,7 +77,8 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
 
   # Clean up DB and csv files for a test/protocols_DEV/ protocol # Useful when testing
   rstudioapi::navigateToFile(".vault/.credentials")
-  jsPsychAdmin::clean_up_dev_protocol(protocol_id = "test/protocols_DEV/999") # Asks for server password
+  jsPsychAdmin::clean_up_dev_protocol(protocol_id = "protocols_DEV/39") # Asks for server password
+  # Old protocols test/protocols_DEV/33
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "999") # Asks for server password
 
   # CAREFUL WITH THIS ---

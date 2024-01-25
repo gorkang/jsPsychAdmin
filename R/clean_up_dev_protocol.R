@@ -14,7 +14,7 @@ clean_up_dev_protocol <- function(protocol_id, override_DEV_limitation = FALSE, 
 
 
   # CHECK IT IS A DEV PROTOCOL
-  is_dev_protocol = grepl("test/protocols_DEV/|999", protocol_id)
+  is_dev_protocol = grepl("protocols_DEV|999", protocol_id)
 
   if (!is_dev_protocol) {
     if (override_DEV_limitation == FALSE) {
@@ -50,7 +50,7 @@ clean_up_dev_protocol <- function(protocol_id, override_DEV_limitation = FALSE, 
 
 
   # Sources and credentials
-  pid = gsub("test/protocols_DEV/", "", protocol_id)
+  pid = gsub("test/protocols_DEV/|protocols_DEV/", "", protocol_id)
   cli::cli_h1("PROTOCOL {pid}")
 
   # 1) Limpiar la base de datos --------------------------------------------
