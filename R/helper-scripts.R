@@ -36,13 +36,26 @@ DELETE_data_server <- function(pid = NULL) {
 
   list_credentials = source(".vault/.credentials") # Get server credentials
   folder_to_delete = paste0(pid, '/.data/')
-  FOLDER_server = gsub("/srv/users/user-cscn/apps/uai-cscn/public/", "", list_credentials$value$main_FOLDER)
 
-  cli::cli_alert_info("Checking files in {.pkg https://cscn.uai.cl/{FOLDER_server}{folder_to_delete}}. This can take a while...")
+  # Full path in server
+  FOLDER_server = paste0(list_credentials$value$main_FOLDER, folder_to_delete)
+
+  # Public folder, only to show a simple message
+  FOLDER_URL = gsub("/srv/users/user-cscn/apps/uai-cscn/public/", "", list_credentials$value$main_FOLDER)
+
+  # If it's a dev protocol delete protocol/ as protocols_DEV comes in pid
+  if (grepl("protocols_DEV", FOLDER_server)) {
+    FOLDER_URL = gsub("protocols/", "", FOLDER_URL)
+    FOLDER_server = gsub("protocols/", "", FOLDER_server)
+    }
+
+
+  cli::cli_alert_info("Checking files in {.pkg https://cscn.uai.cl/{FOLDER_URL}{folder_to_delete}}. This can take a while...")
 
   FILES_in_folder =
     suppressWarnings(
-      system(paste0('sshpass -p ', list_credentials$value$password, ' ssh ', list_credentials$value$user, '@', list_credentials$value$IP, ' ls ', list_credentials$value$main_FOLDER, folder_to_delete), intern = TRUE)
+      system(paste0('sshpass -p ', list_credentials$value$password, ' ssh ', list_credentials$value$user, '@', list_credentials$value$IP, ' ls ',
+                    FOLDER_server), intern = TRUE)
     )
 
   # CHECK if folder .data exists
@@ -77,7 +90,8 @@ DELETE_data_server <- function(pid = NULL) {
 
     if (response_prompt == 1) {
       suppressWarnings(
-        system(paste0('sshpass -p ', list_credentials$value$password, ' ssh ', list_credentials$value$user, '@', list_credentials$value$IP, ' rm ', list_credentials$value$main_FOLDER, folder_to_delete, '*'))
+        system(paste0('sshpass -p ', list_credentials$value$password, ' ssh ', list_credentials$value$user, '@', list_credentials$value$IP, ' rm ',
+                      FOLDER_server, '*'))
       )
       cli::cli_alert_success("{length(FILES_in_folder)} files in `{.pkg {folder_to_delete}}` DELETED")
     } else {
