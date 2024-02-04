@@ -92,7 +92,7 @@ jsPsychHelpeR::sync_server_local(server_folder = "",
                                  delete_nonexistent = TRUE,
                                  ignore_existing = FALSE, # Important to overwrite files that already existed and changed
                                  dont_ask = TRUE,
-                                 list_credentials = source(".vault/.credentials_old_path"))
+                                 list_credentials = source(here::here(".vault/.credentials_old_path")))
 
 
 
@@ -168,9 +168,9 @@ PIDs =
 
     # From pid 38 onward, use the credentials pointing to the new path in the folder
     if (PIDs[.x] > 37) {
-      credentials_file = ".vault/.credentials"
+      credentials_file = here::here(".vault/.credentials")
     } else {
-      credentials_file = ".vault/.credentials_old_path"
+      credentials_file = here::here(".vault/.credentials_old_path")
     }
 
 
