@@ -130,6 +130,11 @@ cli::cli_h1("BACKUP canonical_clean_6")
 jsPsychAdmin::copy_canonical_clean_from_Github_to_server(jsPsych_version = 6, silent = TRUE)
 
 
+# Save table with participants per condition -------------------------------
+
+OUTPUT_participants_table = jsPsychAdmin::check_status_participants_protocol()
+OUTPUT_participants_table$TABLE_clean |> gt::gtsave(here::here(paste0("outputs/", Sys.Date(), "_table_participants.png")))
+
 
 
 # Sources and parameters --------------------------------------------------
@@ -176,6 +181,14 @@ PIDs =
 
     # .x = 1
     cli::cli_h1("Project {PIDs[.x]}")
+
+    # SAVE PID.csv
+    cli::cli_h2("Save project's details")
+    destination = here::here(paste0("../SHARED-data/", PIDs[.x], "/"))
+    if (!dir.exists(destination)) dir.create(destination)
+    readr::write_csv2(OUTPUT_participants_table$STATUS_BY_CONDITION |> dplyr::filter(id_protocol == PIDs[.x]),
+                     paste0(destination, PIDs[.x], "_progress.csv"))
+
 
     # Clean outputs/data/
     cli::cli_h2("Clean up outputs/data")
@@ -333,3 +346,17 @@ set_permissions_google_drive_safely = purrr::quietly(purrr::safely(jsPsychAdmin:
 
 
 cli::cli_h1("END of sync_data_active_protocols.R")
+
+
+
+# https://ntfy.sh/jsPsychAdminNotifications
+# https://github.com/jonocarroll/ntfy
+if (!require('ntfy')) remotes::install_github("jonocarroll/ntfy"); library('ntfy')
+
+# usethis::edit_r_environ()
+# Add NTFY_TOPIC='jsPsychAdminNotifications'
+# ntfy::ntfy_topic(var = "NTFY_TOPIC")
+
+# system('curl -d "Message from R" ntfy.sh/jsPsychAdminNotifications')
+ntfy::ntfy_send(paste0(Sys.Date(), ": Daily sync_data_active_protocols finished!"))
+
