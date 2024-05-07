@@ -37,6 +37,9 @@ DELETE_data_server <- function(pid = NULL) {
   list_credentials = source(".vault/.credentials") # Get server credentials
   folder_to_delete = paste0(pid, '/.data/')
 
+  # Delete initial /
+  folder_to_delete = gsub("^/", "", folder_to_delete)
+
   # Full path in server
   FOLDER_server = paste0(list_credentials$value$main_FOLDER, folder_to_delete)
 

@@ -18,7 +18,7 @@ clean_up_dev_protocol <- function(protocol_id, override_DEV_limitation = FALSE, 
 
   if (!is_dev_protocol) {
     if (override_DEV_limitation == FALSE) {
-      cli::cli_abort("[protocol_id = {protocol_id}] Can only clean up DEV protocols or protocol 999: e.g. 'test/protocols_DEV/999'")
+      cli::cli_abort("[protocol_id = {protocol_id}] Can only clean up DEV protocols or protocol 999: e.g. 'protocols_DEV/999'")
     } else {
       response_prompt = utils::menu(choices = c("Yes, I want to DELETE EVERYTHING!", "NO, thanks for asking"),
                                     title =
