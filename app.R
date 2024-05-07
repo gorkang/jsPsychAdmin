@@ -255,7 +255,7 @@ server <- function(input, output, session) {
         showModal(modalDialog(msg, footer = NULL))
 
         tictoc::tic()
-        jsPsychHelpeR::get_zip(pid = input$pid, what = "data", where = "~/Downloads/", list_credentials = reactives$data_unencrypted)
+        jsPsychHelpeR::get_zip(pid = input$pid, what = "data", where = "~/Downloads/", credentials_file = ".vault/.credentials")
         tictoc::toc()
         removeModal()
 

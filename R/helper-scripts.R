@@ -114,20 +114,20 @@ DELETE_data_server <- function(pid = NULL) {
 #' Check .secrets_mysql.php file exists on CSCN server and writes a file in ~/Downloads
 #'
 #' @param path_to_secrets Location of the .secrets_mysql.php in the server
-#' @param path_to_credentials Location of .vault/.credentials locally
+#' @param credentials_file Path to .credentials file. By default: `.vault/.credentials`
 #'
 #' @return
 #' @export
 #'
 #' @examples
-CHECK_secrets_OK <- function(path_to_secrets = "../../../", path_to_credentials = "") {
+CHECK_secrets_OK <- function(path_to_secrets = "../../../", credentials_file = ".vault/.credentials") {
 
   # OLD PATH
   # path_to_secrets = "../../../../../"
 
   # CHECKS  ---
   if (is.null(path_to_secrets)) cli::cli_abort("path_to_secrets needs a value")
-  credentials_exist = file.exists(paste0(path_to_credentials, ".vault/.credentials"))
+  credentials_exist = file.exists(here::here(credentials_file))
   SSHPASS = Sys.which("sshpass") # Check if sshpass is installed
 
   if (credentials_exist) {
@@ -144,7 +144,7 @@ CHECK_secrets_OK <- function(path_to_secrets = "../../../", path_to_credentials 
 
   # CHECK ---
 
-  list_credentials = source(paste0(path_to_credentials, ".vault/.credentials")) # Get server credentials
+  list_credentials = source(here::here(credentials_file)) # Get server credentials
   file_to_check = paste0(path_to_secrets, '/.secrets_mysql.php')
 
   cli::cli_alert_info("Checking if Secrets file exists... This can take a while...")

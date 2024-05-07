@@ -92,7 +92,7 @@ jsPsychHelpeR::sync_server_local(server_folder = "",
                                  delete_nonexistent = TRUE,
                                  ignore_existing = FALSE, # Important to overwrite files that already existed and changed
                                  dont_ask = TRUE,
-                                 list_credentials = source(here::here(".vault/.credentials_old_path")))
+                                 credentials_file = here::here(".vault/.credentials_old_path"))
 
 
 
@@ -223,7 +223,7 @@ PIDs =
       ignore_existing = TRUE,
       all_messages = FALSE,
       tempdir_location = OUTPUT_folder,
-      list_credentials = source(credentials_file)
+      credentials_file = credentials_file
     )
 
     # If case the zip did not exist before, now it should (if they were files)

@@ -1,4 +1,4 @@
-#' Titextract_tablesle
+#' extract MySQL tables
 #'
 #' @param list_credentials list with mysql credentials
 #' @param serial_parallel serial or parallel
