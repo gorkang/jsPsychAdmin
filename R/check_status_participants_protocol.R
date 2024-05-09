@@ -25,10 +25,10 @@ check_status_participants_protocol <- function(pid = NULL) {
   if(paste(sodium::pubkey(key_private), collapse = " ") == key_public) {
 
     #Unencrypt data and make it available elsewhere
-    data_unencrypted <- unserialize(sodium::simple_decrypt(data_encrypted, key_private))
+    DB_credentials <- unserialize(sodium::simple_decrypt(data_encrypted, key_private))
 
     # Extract tables using data_unencrypted
-    LIST_tables = jsPsychAdmin:::extract_tables(list_credentials = data_unencrypted, serial_parallel = "parallel") # ~7s
+    LIST_tables = jsPsychAdmin:::extract_tables(list_credentials = list_credentials, DB_credentials = DB_credentials, serial_parallel = "parallel") # ~7s
 
     DF_user_raw = LIST_tables$user
     DF_experimental_condition_raw = LIST_tables$experimental_condition

@@ -1,4 +1,23 @@
 
+# New protocols -----------------------------------------------------------
+
+  # We develop locally, uploading via Pull request to GITHUB protocol_DEV/N
+
+  # 1) Once a GITHUB protocol_DEV/N is ready to test online, we need to do:
+
+    # - GITHUB protocol_DEV/N -> SERVER protocol_DEV/N
+
+  # 2) And once that is ready:
+
+    # - clean up dev protocol:   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "protocols_DEV/999")
+
+    # - SERVER protocol_DEV/N -> SERVER protocol/N
+
+
+# See also 000_PREPARE_protocol_for_production.R
+
+
+
 # Install packages --------------------------------------------------------
 
 pak::pkg_install(
@@ -67,6 +86,9 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
   OUTPUT = jsPsychAdmin::check_status_participants_protocol()
   OUTPUT$STATUS_BY_CONDITION
   OUTPUT$TABLE_clean # This does not include Discarded
+
+  OUTPUT$TABLE_clean |> gt::gtsave("outputs/table_participan")
+
   OUTPUT$TOTAL_participants
   # TODO: should also check how many files from how many tasks???
 
@@ -77,8 +99,10 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
 
   # Clean up DB and csv files for a test/protocols_DEV/ protocol # Useful when testing
   rstudioapi::navigateToFile(".vault/.credentials")
-  jsPsychAdmin::clean_up_dev_protocol(protocol_id = "protocols_DEV/39") # Asks for server password
-  # Old protocols test/protocols_DEV/33
+
+  jsPsychAdmin::clean_up_dev_protocol(protocol_id = "protocols_DEV/44") # Asks for server password
+
+  # Old protocols test/protocols_DEV/999
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "999") # Asks for server password
 
   # CAREFUL WITH THIS ---
@@ -144,11 +168,13 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
 
 ## Connect to a running monkey -------------------------------------------
 
-  jsPsychMonkeys::reconnect_to_VNC(container_name = "monkey_90")
+  # jsPsychMonkeys::reconnect_to_VNC()
+  jsPsychMonkeys::reconnect_to_VNC(container_name = "monkey_2")
 
 
 ## Run single monkey ------------------------------------------------------
 
+  # Locally
   jsPsychMonkeys::release_the_monkeys(uid = "1",
                                       sequential_parallel =  "sequential",
                                       open_VNC = TRUE,
@@ -158,16 +184,56 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
                                       debug_file = TRUE,
                                       console_logs = TRUE)
 
+  # Server
+  jsPsychMonkeys::release_the_monkeys(uid = "1223",
+                                      credentials_folder = ".vault/",
+                                      sequential_parallel =  "sequential",
+                                      initial_wait = 1, wait_retry = 5,
+                                      open_VNC = TRUE,
+                                      server_folder_tasks = "protocols_DEV/999",
+                                      keep_alive = TRUE,
+                                      disable_web_security = FALSE,
+                                      screenshot = TRUE,
+                                      debug_file = TRUE,
+                                      console_logs = TRUE)
 
+## Run multiple monkeys ------------------------------------------------------
+
+  # Locally
+  jsPsychMonkeys::release_the_monkeys(uid = "1:10",
+                                      number_of_cores = 10,
+                                      sequential_parallel =  "parallel",
+                                      open_VNC = FALSE,
+                                      local_folder_tasks = "~/Downloads/canonical_protocol/",
+                                      keep_alive = FALSE,
+                                      disable_web_security = TRUE,
+                                      screenshot = TRUE,
+                                      debug_file = TRUE,
+                                      console_logs = TRUE)
+
+  # Server
+  jsPsychMonkeys::release_the_monkeys(uid = "1:200",
+                                      number_of_cores = 14,
+                                      initial_wait = 0.1, wait_retry = 1, #5
+                                      credentials_folder = ".vault/",
+                                      sequential_parallel =  "parallel",
+                                      open_VNC = FALSE,
+                                      server_folder_tasks = "protocols_DEV/46",
+                                      keep_alive = FALSE,
+                                      disable_web_security = FALSE,
+                                      screenshot = FALSE,
+                                      debug_file = TRUE,
+                                      console_logs = TRUE)
 
 # HELPER ------------------------------------------------------------------
 
 
 ## Create new project ----------------------------------------
 
-  jsPsychHelpeR::run_initial_setup(pid = "test/protocols_DEV/37",
+  jsPsychHelpeR::run_initial_setup(pid = "test/protocols_DEV/999",
                                    download_files = TRUE,
-                                   folder = "~/Downloads/jsPsychHelpeR37"
+                                   folder = "~/Downloads/jsPsychHelpeR999",
+                                   credentials_file = ".vault/.credentials"
                                    )
 
 

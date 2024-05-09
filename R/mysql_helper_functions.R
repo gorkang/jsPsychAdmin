@@ -8,10 +8,10 @@ get_table <- function(table_name, con) {
 
 
 
+# Called in parallel in mysql_extract_tables()
+get_table_parallel <- function(table_name, DB_credentials) {
 
-get_table_parallel <- function(table_name, list_credentials) {
-
-  con = openDBconnection(list_credentials)
+  con = openDBconnection(DB_credentials)
 
   TABLE <- dplyr::tbl(src = con, table_name) |> dplyr::as_tibble()
 
@@ -22,18 +22,31 @@ get_table_parallel <- function(table_name, list_credentials) {
 
 
 
-openDBconnection <- function(list_credentials) {
+openDBconnection <- function(DB_credentials, Driver = "MySQL ODBC 8.1 Unicode Driver") {
+
+  drivers_available = odbc::odbcListDrivers()$name |> unique()
+  Driver_DB_credentials = DB_credentials$value$Driver
+
+  if (!Driver_DB_credentials %in% drivers_available) {
+
+    cli::cli_alert_danger("{.code {Driver_DB_credentials}} not found in this computer, using {.code {Driver}} instead")
+    Driver_DB_credentials = Driver
+
+  }
 
   con <- DBI::dbConnect(odbc::odbc(),
-                        Driver = list_credentials$value$Driver,
-                        host = list_credentials$value$host,
-                        port = list_credentials$value$port,
-                        UID = list_credentials$value$UID,
-                        PWD = list_credentials$value$PWD,
-                        Database = list_credentials$value$Database
+                        Driver = Driver_DB_credentials,
+                        host = DB_credentials$value$host,
+                        port = DB_credentials$value$port,
+                        UID = DB_credentials$value$UID,
+                        PWD = DB_credentials$value$PWD,
+                        Database = DB_credentials$value$Database
   )
+
   return(con)
+
 }
+
 
 
 
@@ -228,7 +241,7 @@ delete_MySQL_tables_pid <- function(pid) {
     # PID_ssh_tunnel = ssh_tunnel$result$get_pid()
 
     # Connect to mysql DB
-    db_con = openDBconnection(list_credentials = DB_credentials)
+    db_con = openDBconnection(DB_credentials = DB_credentials)
 
     cli::cli_h1("DELETE all tables for pid {pid}")
 

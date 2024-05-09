@@ -155,7 +155,7 @@ server <- function(input, output, session) {
       reactives$data_unencrypted <- unserialize(simple_decrypt(data_encrypted, key_private))
 
       # Extract tables using data_unencrypted
-      reactives$LIST_tables = jsPsychAdmin::extract_tables(list_credentials = reactives$data_unencrypted, serial_parallel = "parallel") # ~7s
+      reactives$LIST_tables = jsPsychAdmin::extract_tables(list_credentials = reactives$data_unencrypted, DB_credentials = reactives$data_unencrypted, serial_parallel = "parallel") # ~7s
 
       # Conditions tabls
       DF_conditions = reactives$LIST_tables$experimental_condition |>

@@ -33,7 +33,7 @@
 
   # CHECK jsPsychHelpeR runs OK
 
-  # || THIS WILL take a while, as all the renv packages need to update
+  # THIS WILL take a while, as all the renv packages need to update
   # Create NEW jsPsychHelpeR project, downloading the files from the server
   jsPsychHelpeR::run_initial_setup(pid = PROTOCOLID,
                                    download_files = TRUE,

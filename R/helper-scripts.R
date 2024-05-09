@@ -651,7 +651,7 @@ copy_canonical_clean_from_Github_to_server <- function(jsPsych_version = 6, sile
 
   # Prepare folder
   # server_folder = paste0("test/", canonical_clean_version, "/")
-  server_folder = paste0("../protocols_DEV/", canonical_clean_version, "/")
+  server_folder = paste0("protocols_DEV/", canonical_clean_version, "/")
 
   # CS of server canonical_clean
   jsPsychHelpeR::get_zip(pid = server_folder,

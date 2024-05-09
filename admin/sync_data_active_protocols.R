@@ -52,7 +52,7 @@ cli::cli_h1("CHECK secrets")
 
 # Checks the .secrets_mysql.php exists on CSCN server. Writes a file in ~/Downloads
 # source(here::here("admin/helper-scripts-admin.R"))
-jsPsychAdmin::CHECK_secrets_OK(path_to_credentials = "/home/emrys/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/jsPsychHelpeR/")
+jsPsychAdmin::CHECK_secrets_OK(credentials_file = ".vault/.credentials")
 # TODO: Adapt to new path
 
 
@@ -72,7 +72,7 @@ jsPsychHelpeR::sync_server_local(server_folder = "",
                                  dont_ask = TRUE)
 
 # https://cscn.uai.cl/lab/protocols_DEV/ to  ../CSCN-server/protocols_DEV/
-jsPsychHelpeR::sync_server_local(server_folder = "../protocols_DEV/",
+jsPsychHelpeR::sync_server_local(server_folder = "protocols_DEV/",
                                  local_folder = here::here(paste0("..", "/CSCN-server/protocols_DEV/")),
                                  direction = "server_to_local",
                                  only_test = FALSE,
@@ -124,13 +124,15 @@ jsPsychHelpeR::sync_server_local(server_folder = "../../../DB_dumps/",
 
 cli::cli_h1("BACKUP canonical_clean_6")
 
-# Copies canonical clean Github to the server
+# Copies canonical_clean_6 Github to the server
 # This SHOULD BE THE ONLY WAY WE UPDATE THE SERVER canonical_clean
 
 jsPsychAdmin::copy_canonical_clean_from_Github_to_server(jsPsych_version = 6, silent = TRUE)
 
 
 # Save table with participants per condition -------------------------------
+
+cli::cli_h1("Save table_participants.png")
 
 OUTPUT_participants_table = jsPsychAdmin::check_status_participants_protocol()
 OUTPUT_participants_table$TABLE_clean |> gt::gtsave(here::here(paste0("outputs/", Sys.Date(), "_table_participants.png")))
