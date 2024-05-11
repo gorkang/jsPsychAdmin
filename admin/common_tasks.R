@@ -19,6 +19,7 @@
 
 
 # Install packages --------------------------------------------------------
+# pak::pak_cleanup()
 
 pak::pkg_install(
   pkg = c(

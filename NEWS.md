@@ -4,6 +4,7 @@ Minor updates
 
 * Sync version number with admin, maker, monkeys and manual
 * All non-mysql credentials parameters are now credentials_file instead of list_credentials
+* Add function to check if daily backups are done, to avoid multiple runs
 
 # jsPsychAdmin 0.2
 

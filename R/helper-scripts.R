@@ -683,3 +683,38 @@ copy_canonical_clean_from_Github_to_server <- function(jsPsych_version = 6, sile
   cli::cli_alert_success("Github {canonical_clean_version} copied to server")
 
 }
+
+
+
+
+#' CheckLastRun_sync_data_active_protocols
+#' Check if DB backup, canonical clean backup and data of active protocols did run today
+#'
+#' @param abort_if_done Abort if everything ran today
+#'
+#' @return
+#' @export
+#'
+#' @examples CheckLastRun_sync_data_active_protocols()
+CheckLastRun_sync_data_active_protocols <- function(abort_if_done = TRUE) {
+
+  TODAY = Sys.Date()
+  last_DB_BACKUP = list.files(here::here(paste0("..", "/CSCN-server/DB_backups/"))) |> tail(1)
+  last_canonical_clean_BACKUP = list.files(here::here(paste0("..", "/CSCN-server/canonical_clean_backups"))) |> tail(1)
+  last_DATA_files = list.files(here::here(paste0("..", "/SHARED-data")), full.names = TRUE, recursive = TRUE)
+  last_DATA = file.info(last_DATA_files) |> tibble::as_tibble() |> dplyr::arrange(desc(mtime)) |> dplyr::pull(mtime) |> head(1)
+
+
+  CHECK_DB_BACKUP = grepl(TODAY, last_DB_BACKUP)
+  CHECK_canonical_clean_BACKUP = grepl(TODAY, last_canonical_clean_BACKUP)
+  CHECK_DATA = grepl(TODAY, last_DATA)
+
+  if(all(CHECK_DB_BACKUP, CHECK_canonical_clean_BACKUP, CHECK_DATA) & abort_if_done == TRUE) cli::cli_abort("Synch data active protocols already ran today: {TODAY}")
+
+  list_OUTPUT = list(CHECK_DB_BACKUP = CHECK_DB_BACKUP,
+                     CHECK_canonical_clean_BACKUP = CHECK_canonical_clean_BACKUP,
+                     CHECK_DATA = CHECK_DATA)
+
+  return(list_OUTPUT)
+
+}

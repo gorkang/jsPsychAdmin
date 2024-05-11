@@ -46,53 +46,58 @@
 
 
 
+# CHECK last day run ------------------------------------------------------
+
+  # Check if DB backup, canonical clean backup and data of active protocols did run today
+  CHECK = CheckLastRun_sync_data_active_protocols(abort_if_done = TRUE)
+
+
 # CHECK Secrets exist -----------------------------------------------------
 
-cli::cli_h1("CHECK secrets")
+  cli::cli_h1("CHECK secrets")
 
-# Checks the .secrets_mysql.php exists on CSCN server. Writes a file in ~/Downloads
-# source(here::here("admin/helper-scripts-admin.R"))
-jsPsychAdmin::CHECK_secrets_OK(credentials_file = ".vault/.credentials")
-# TODO: Adapt to new path
+  # Checks the .secrets_mysql.php exists on CSCN server. Writes a file in ~/Downloads
+  jsPsychAdmin::CHECK_secrets_OK(credentials_file = ".vault/.credentials")
 
 
 # Sync CSCN-server --------------------------------------------------------
+
   # Syncs all protocols (without data)
 
-cli::cli_h1("SYNC CSCN-server")
+  cli::cli_h1("SYNC CSCN-server")
 
-# https://cscn.uai.cl/lab/protocols/ to  ../CSCN-server/protocols/
-jsPsychHelpeR::sync_server_local(server_folder = "",
-                                 local_folder = here::here(paste0("..", "/CSCN-server/protocols/")),
-                                 direction = "server_to_local",
-                                 only_test = FALSE,
-                                 exclude_csv = TRUE, # DO NOT INCLUDE DATA
-                                 delete_nonexistent = TRUE,
-                                 ignore_existing = FALSE, # Important to overwrite files that already existed and changed
-                                 dont_ask = TRUE)
+  # https://cscn.uai.cl/lab/protocols/ to  ../CSCN-server/protocols/
+  jsPsychHelpeR::sync_server_local(server_folder = "",
+                                   local_folder = here::here(paste0("..", "/CSCN-server/protocols/")),
+                                   direction = "server_to_local",
+                                   only_test = FALSE,
+                                   exclude_csv = TRUE, # DO NOT INCLUDE DATA
+                                   delete_nonexistent = TRUE,
+                                   ignore_existing = FALSE, # Important to overwrite files that already existed and changed
+                                   dont_ask = TRUE)
 
-# https://cscn.uai.cl/lab/protocols_DEV/ to  ../CSCN-server/protocols_DEV/
-jsPsychHelpeR::sync_server_local(server_folder = "protocols_DEV/",
-                                 local_folder = here::here(paste0("..", "/CSCN-server/protocols_DEV/")),
-                                 direction = "server_to_local",
-                                 only_test = FALSE,
-                                 exclude_csv = TRUE, # DO NOT INCLUDE DATA
-                                 delete_nonexistent = TRUE,
-                                 ignore_existing = FALSE, # Important to overwrite files that already existed and changed
-                                 dont_ask = TRUE)
+  # https://cscn.uai.cl/lab/protocols_DEV/ to  ../CSCN-server/protocols_DEV/
+  jsPsychHelpeR::sync_server_local(server_folder = "protocols_DEV/",
+                                   local_folder = here::here(paste0("..", "/CSCN-server/protocols_DEV/")),
+                                   direction = "server_to_local",
+                                   only_test = FALSE,
+                                   exclude_csv = TRUE, # DO NOT INCLUDE DATA
+                                   delete_nonexistent = TRUE,
+                                   ignore_existing = FALSE, # Important to overwrite files that already existed and changed
+                                   dont_ask = TRUE)
 
 
 
-# from OLD PATH https://cscn.uai.cl/lab/public/instruments/protocols/ to  ../CSCN-server/protocols_old_path/
-jsPsychHelpeR::sync_server_local(server_folder = "",
-                                 local_folder = here::here(paste0("..", "/CSCN-server/protocols_old_path/")),
-                                 direction = "server_to_local",
-                                 only_test = FALSE,
-                                 exclude_csv = TRUE, # DO NOT INCLUDE DATA
-                                 delete_nonexistent = TRUE,
-                                 ignore_existing = FALSE, # Important to overwrite files that already existed and changed
-                                 dont_ask = TRUE,
-                                 credentials_file = here::here(".vault/.credentials_old_path"))
+  # from OLD PATH https://cscn.uai.cl/lab/public/instruments/protocols/ to  ../CSCN-server/protocols_old_path/
+  jsPsychHelpeR::sync_server_local(server_folder = "",
+                                   local_folder = here::here(paste0("..", "/CSCN-server/protocols_old_path/")),
+                                   direction = "server_to_local",
+                                   only_test = FALSE,
+                                   exclude_csv = TRUE, # DO NOT INCLUDE DATA
+                                   delete_nonexistent = TRUE,
+                                   ignore_existing = FALSE, # Important to overwrite files that already existed and changed
+                                   dont_ask = TRUE,
+                                   credentials_file = here::here(".vault/.credentials_old_path"))
 
 
 
@@ -119,8 +124,7 @@ jsPsychHelpeR::sync_server_local(server_folder = "../../../DB_dumps/",
 
 
 
-
-# Copy canonical_clean from Github to server ------------------------------
+# Copy canonical_clean: Github -> SERVER ------------------------------
 
 cli::cli_h1("BACKUP canonical_clean_6")
 
