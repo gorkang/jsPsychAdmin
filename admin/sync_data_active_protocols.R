@@ -49,7 +49,7 @@
 # CHECK last day run ------------------------------------------------------
 
   # Check if DB backup, canonical clean backup and data of active protocols did run today
-  CHECK = CheckLastRun_sync_data_active_protocols(abort_if_done = TRUE)
+  CHECK = jsPsychAdmin::CheckLastRun_sync_data_active_protocols(abort_if_done = TRUE)
 
 
 # CHECK Secrets exist -----------------------------------------------------

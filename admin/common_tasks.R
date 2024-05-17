@@ -231,7 +231,7 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
 
 ## Create new project ----------------------------------------
 
-  jsPsychHelpeR::run_initial_setup(pid = "test/protocols_DEV/999",
+  jsPsychHelpeR::run_initial_setup(pid = "protocols_DEV/999",
                                    download_files = TRUE,
                                    folder = "~/Downloads/jsPsychHelpeR999",
                                    credentials_file = ".vault/.credentials"
