@@ -61,7 +61,7 @@ check_status_participants_protocol <- function(pid = NULL) {
     #   dplyr::mutate(conditions = paste0(" | ", conditions, "")) |>
     #   dplyr::rename(user_condition = conditions)
 
-    table_conditions_user_condition =
+    table_conditions_user_condition_temp =
       LIST_tables$user_condition |>
       # dplyr::filter(id_protocol == 320) |>
       dplyr::arrange(id_user, id_protocol, id_condition) |>
@@ -73,7 +73,15 @@ check_status_participants_protocol <- function(pid = NULL) {
       dplyr::arrange(condition_name) |> # Avoid repetitions because of different order
       dplyr::reframe(condition_name = paste(condition_name, collapse = ", "), .groups = "drop") |>
       dplyr::count(id_protocol, task_name, status, condition_name) |>
-      tidyr::pivot_wider(names_from = status, values_from = n) |>
+      tidyr::pivot_wider(names_from = status, values_from = n)
+
+
+    # In case there are no completed, discarded or assigned
+    CONDS = table_conditions_user_condition_temp |> dplyr::distinct(id_protocol) |> dplyr::mutate(completed = NA_integer_, discarded = NA_integer_, assigned = NA_integer_)
+
+    table_conditions_user_condition =
+      table_conditions_user_condition_temp |>
+      dplyr::left_join(CONDS, by = dplyr::join_by(id_protocol, completed, discarded)) |>
       tidyr::replace_na(list(completed = 0, discarded = 0, assigned = 0)) |>
       dplyr::group_by(id_protocol, task_name) |>
       dplyr::reframe(conditions = paste(paste0(condition_name, ": ", completed, "/", assigned, "/", discarded, ""), collapse = ", ")) |>
