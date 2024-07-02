@@ -5,7 +5,7 @@
   # 1. Creates a config.js file with all the tasks in ../jsPsychMaker/canonical_protocol/
   # 2. Uploads ../jsPsychMaker/canonical_protocol/ to the 999 protocol in the server
   # 3. Deletes the contents of .data/
-  # 4. Open Mysql-workbech to delete all 999 tables
+  # 4. Open MySQL-workbech to delete all 999 tables
   # 5. Opens jsPsychMonkeys to simulate the 5 standard participants
   # 6. Opens jsPsychHelpeR to prepare data (deletes data/999, downloads, renames...)
   # 7. TODO: Compare new RUN with old RUN
