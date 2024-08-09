@@ -101,7 +101,7 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
   # Clean up DB and csv files for a test/protocols_DEV/ protocol # Useful when testing
   rstudioapi::navigateToFile(".vault/.credentials")
 
-  jsPsychAdmin::clean_up_dev_protocol(protocol_id = "protocols_DEV/44") # Asks for server password
+  jsPsychAdmin::clean_up_dev_protocol(protocol_id = "protocols_DEV/999") # Asks for server password
 
   # Old protocols test/protocols_DEV/999
   jsPsychAdmin::clean_up_dev_protocol(protocol_id = "999") # Asks for server password
@@ -191,7 +191,7 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
                                       sequential_parallel =  "sequential",
                                       initial_wait = 1, wait_retry = 5,
                                       open_VNC = TRUE,
-                                      server_folder_tasks = "protocols_DEV/999",
+                                      server_folder_tasks = "protocols_DEV/testing/",
                                       keep_alive = TRUE,
                                       disable_web_security = FALSE,
                                       screenshot = TRUE,
@@ -213,18 +213,22 @@ jsPsychAdmin::get_parameters_of_function("jsPsychHelpeR::run_initial_setup()")
                                       console_logs = TRUE)
 
   # Server
-  jsPsychMonkeys::release_the_monkeys(uid = "1:200",
-                                      number_of_cores = 14,
-                                      initial_wait = 0.1, wait_retry = 1, #5
+  jsPsychMonkeys::release_the_monkeys(uid = "1:30",
+                                      number_of_cores = 15,
+                                      initial_wait = 0.1, wait_retry = 2, #5
                                       credentials_folder = ".vault/",
                                       sequential_parallel =  "parallel",
                                       open_VNC = FALSE,
-                                      server_folder_tasks = "protocols_DEV/46",
+                                      server_folder_tasks = "protocols_DEV/999",
+                                      big_container = TRUE,
                                       keep_alive = FALSE,
                                       disable_web_security = FALSE,
                                       screenshot = FALSE,
                                       debug_file = TRUE,
                                       console_logs = TRUE)
+
+  if (!require('ntfy')) remotes::install_github("jonocarroll/ntfy"); library('ntfy')
+  ntfy::ntfy_send(paste0(Sys.Date(), ": Monkeys finished!"))
 
 # HELPER ------------------------------------------------------------------
 

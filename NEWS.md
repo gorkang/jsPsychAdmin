@@ -1,10 +1,11 @@
-# jsPsychAdmin 0.3.5.900
+# jsPsychAdmin 0.3.5.902
 
 Minor updates
 
 * Sync version number with admin, maker, monkeys and manual
 * All non-mysql credentials parameters are now credentials_file instead of list_credentials
 * Add function to check if daily backups are done, to avoid multiple runs
+* clean_up_dev_protocol(): ask to delete the pid + 999 MySQL tables also, as we commonly use this for dev protocols
 
 # jsPsychAdmin 0.2
 

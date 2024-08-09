@@ -10,6 +10,7 @@
 clean_up_dev_protocol <- function(protocol_id, override_DEV_limitation = FALSE, backup_datafiles_first = TRUE) {
 
   # protocol_id = "test/protocols_DEV/999"
+  # protocol_id = "protocols_DEV/999"
   # protocol_id = 999
 
 
@@ -57,6 +58,14 @@ clean_up_dev_protocol <- function(protocol_id, override_DEV_limitation = FALSE, 
 
   # Delete the XYZ protocol rows in all the MYSQL tables
   delete_MySQL_tables_pid(pid)
+
+  # If it is a dev protocol, we usually add 999 to the pid
+
+  if (is_dev_protocol & !grepl("999", pid)) {
+    cli::cli_alert_info("As it is a dev protocol without 999, we will also delete the {pid}999 MySQL tables.")
+    pid_DEV = 50999
+    delete_MySQL_tables_pid(pid_DEV)
+  }
 
 
   # 2) Limpiar los archivos de resultados de Monkeys -----------------------
