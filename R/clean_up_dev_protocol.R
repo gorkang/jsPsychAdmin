@@ -61,9 +61,9 @@ clean_up_dev_protocol <- function(protocol_id, override_DEV_limitation = FALSE, 
 
   # If it is a dev protocol, we usually add 999 to the pid
 
-  if (is_dev_protocol & !grepl("999", pid)) {
-    cli::cli_alert_info("As it is a dev protocol without 999, we will also delete the {pid}999 MySQL tables.")
-    pid_DEV = 50999
+  if (is_dev_protocol & !grepl("9999", pid)) {
+    cli::cli_alert_info("As it is a dev protocol without 9999, we will also delete the {pid}9999 MySQL tables.")
+    pid_DEV = paste0(pid, 9999)
     delete_MySQL_tables_pid(pid_DEV)
   }
 
