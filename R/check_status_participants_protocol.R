@@ -77,11 +77,13 @@ check_status_participants_protocol <- function(pid = NULL) {
 
 
     # In case there are no completed, discarded or assigned
-    CONDS = table_conditions_user_condition_temp |> dplyr::distinct(id_protocol) |> dplyr::mutate(completed = NA_integer_, discarded = NA_integer_, assigned = NA_integer_)
+    CONDS = table_conditions_user_condition_temp |>
+      dplyr::distinct(id_protocol) |>
+      dplyr::mutate(completed = NA_integer_, discarded = NA_integer_, assigned = NA_integer_)
 
     table_conditions_user_condition =
       table_conditions_user_condition_temp |>
-      dplyr::left_join(CONDS, by = dplyr::join_by(id_protocol, completed, discarded)) |>
+      dplyr::left_join(CONDS, by = dplyr::join_by(id_protocol, completed, discarded, assigned)) |>
       tidyr::replace_na(list(completed = 0, discarded = 0, assigned = 0)) |>
       dplyr::group_by(id_protocol, task_name) |>
       dplyr::reframe(conditions = paste(paste0(condition_name, ": ", completed, "/", assigned, "/", discarded, ""), collapse = ", ")) |>
