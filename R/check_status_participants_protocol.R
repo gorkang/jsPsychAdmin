@@ -75,6 +75,11 @@ check_status_participants_protocol <- function(pid = NULL) {
       dplyr::count(id_protocol, task_name, status, condition_name) |>
       tidyr::pivot_wider(names_from = status, values_from = n)
 
+    # If no column assigned, add it, as it will be needed
+    if (!"assigned" %in% names(table_conditions_user_condition_temp)) {
+      table_conditions_user_condition_temp = table_conditions_user_condition_temp |> dplyr::mutate(assigned = NA_integer_)
+      }
+
 
     # In case there are no completed, discarded or assigned
     CONDS = table_conditions_user_condition_temp |>

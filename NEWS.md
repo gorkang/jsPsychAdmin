@@ -1,3 +1,10 @@
+# jsPsychAdmin 0.3.5.903
+
+Minor updates
+
+* Fix issue in check_status_participants_protocol() when no assigned participants
+
+
 # jsPsychAdmin 0.3.5.902
 
 Minor updates
