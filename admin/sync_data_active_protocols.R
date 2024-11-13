@@ -284,14 +284,25 @@ PIDs =
 
         read_data_safely = purrr::quietly(purrr::safely(jsPsychHelpeR::read_data))
 
-        DF_raw = read_data_safely(input_files = zip_name)
+        DF_raw = read_data_safely(input_files = zip_name, location_duplicates = "~/Downloads")
 
         # If there are WARNINGS, show alert and store in file
         if (length(DF_raw$warnings) > 0) {
+
           cli::cli_alert_danger("{length(DF_raw$warnings)} warnings in pid = {PIDs[.x]} \n\n {DF_raw$warnings}")
           clean_WARNING = gsub("\\'", "", DF_raw$warnings)
           WARNING_string = glue::glue("--------------- {Sys.Date()} ---------------\n\n{length(DF_raw$warnings)} warnings in pid = {PIDs[.x]} \n\n {clean_WARNING}\n\n\n")
           system(paste0("printf '%s\n' '", WARNING_string, "'  >> ~/Downloads/pid_", PIDs[.x], "_", length(DF_raw$warnings), "_warnings.txt"))
+
+        } else if (length(DF_raw$result$error) > 0) {
+
+          ## TESTING: If duplicates, print details. See read_data() in helper
+
+          cli::cli_alert_danger("ERROR in pid = {PIDs[.x]} \n\n {DF_raw$result$error$message}")
+          clean_ERROR = gsub("\\'", "", DF_raw$result$error$message)
+          ERROR_string = glue::glue("--------------- {Sys.Date()} ---------------\n\n{length(DF_raw$result$error)} ERRORS in pid = {PIDs[.x]} \n\n {clean_ERROR}\n\n\n")
+          system(paste0("printf '%s\n' '", ERROR_string, "'  >> ~/Downloads/pid_", PIDs[.x], "_", length(DF_raw$result$error), "_ERRORS.txt"))
+
         }
 
         if (is.null(DF_raw$result$error)) {
@@ -395,4 +406,3 @@ cli::cli_h1("END of sync_data_active_protocols.R")
 
 # system('curl -d "Message from R" ntfy.sh/jsPsychAdminNotifications')
 ntfy::ntfy_send(paste0(Sys.Date(), ": Daily sync_data_active_protocols finished!"))
-
