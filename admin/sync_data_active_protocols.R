@@ -107,6 +107,12 @@ if (!is.null(OUTPUT_participants_table$error)) {
 
   cli::cli_h1("SYNC CSCN-server")
 
+
+  # Create a CS of the protocols folder. If it gets deleted in the server, the next sync step will delete the local copy
+  name_CS_zip = paste0("../CSCN-server/CS_protocols/", Sys.Date(), "_CS_protocols.zip")
+  jsPsychHelpeR::zip_files(folder_files = "../CSCN-server/protocols/", zip_name = name_CS_zip, remove_files = FALSE, all_messages = TRUE)
+
+
   # https://cscn.uai.cl/lab/protocols/ to  ../CSCN-server/protocols/
   jsPsychHelpeR::sync_server_local(server_folder = "",
                                    local_folder = here::here(paste0("..", "/CSCN-server/protocols/")),
@@ -117,6 +123,7 @@ if (!is.null(OUTPUT_participants_table$error)) {
                                    ignore_existing = FALSE, # Important to overwrite files that already existed and changed
                                    dont_ask = TRUE)
 
+  # We don´t do a CS of this. Anything DEV in the server can die
   # https://cscn.uai.cl/lab/protocols_DEV/ to  ../CSCN-server/protocols_DEV/
   jsPsychHelpeR::sync_server_local(server_folder = "protocols_DEV/",
                                    local_folder = here::here(paste0("..", "/CSCN-server/protocols_DEV/")),
