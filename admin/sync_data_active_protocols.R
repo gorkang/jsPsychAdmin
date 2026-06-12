@@ -47,11 +47,24 @@
 
 
 
-# Libreria mensajes -------------------------------------------------------
+# Librerias -------------------------------------------------------
 
-# https://ntfy.sh/jsPsychAdminNotifications
-# https://github.com/jonocarroll/ntfy
+# Librerias mensajes
+  # https://ntfy.sh/jsPsychAdminNotifications
+  # https://github.com/jonocarroll/ntfy
 if (!require('ntfy')) remotes::install_github("jonocarroll/ntfy"); library('ntfy')
+if (!require('jsPsychAdmin')) remotes::install_github("gorkang/jsPsychAdmin")
+if (!require('jsPsychHelpeR')) remotes::install_github("gorkang/jsPsychHelpeR")
+if (!require('googlesheets4')) install.packages("googlesheets4")
+
+if (!require('cli')) install.packages("cli")
+if (!require('dplyr')) install.packages("dplyr")
+if (!require('purrr')) install.packages("purrr")
+if (!require('here')) install.packages("here")
+if (!require('readr')) install.packages("readr")
+
+
+
 
 # usethis::edit_r_environ()
 # Add NTFY_TOPIC='jsPsychAdminNotifications'
@@ -109,8 +122,8 @@ if (!is.null(OUTPUT_participants_table$error)) {
 
 
   # Create a CS of the protocols folder. If it gets deleted in the server, the next sync step will delete the local copy
-  name_CS_zip = paste0("../CSCN-server/CS_protocols/", Sys.Date(), "_CS_protocols.zip")
-  jsPsychHelpeR::zip_files(folder_files = "../CSCN-server/protocols/", zip_name = name_CS_zip, remove_files = FALSE, all_messages = TRUE)
+  name_CS_zip = here::here(paste0("../CSCN-server/CS_protocols/", Sys.Date(), "_CS_protocols.zip"))
+  jsPsychHelpeR::zip_files(folder_files = here::here("../CSCN-server/protocols/"), zip_name = name_CS_zip, remove_files = FALSE, all_messages = TRUE)
 
 
   # https://cscn.uai.cl/lab/protocols/ to  ../CSCN-server/protocols/
