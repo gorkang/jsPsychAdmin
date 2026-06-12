@@ -2,13 +2,13 @@
 
   # PARAMETERS --------------------------------
 
-  PROTOCOLID = "test/protocols_DEV/31"
+  PROTOCOLID = "protocols_DEV/51"
   number_of_monkeys = "1:100"
 
   # -------------------------------------------
 
   # Automatic parameters
-  pid = gsub("test/protocols_DEV/", "", PROTOCOLID)
+  pid = gsub("protocols_DEV/", "", PROTOCOLID)
 
 
    cli::cli_h1("PROTOCOL {pid}")
@@ -45,13 +45,14 @@
   # 2) Clean data and  MySQL DB --------------------------------------------
 
     # rstudioapi::navigateToFile(".vault/.credentials")
-    jsPsychAdmin::clean_up_dev_protocol(protocol_id = pid) # Will ask for server password
+    jsPsychAdmin::clean_up_dev_protocol(protocol_id = PROTOCOLID) # Will ask for server password
+    # jsPsychAdmin::clean_up_dev_protocol(protocol_id = pid) # Will ask for server password
 
 
   # 3) Revisar el config.js para pasar el experiment a produccion ----------
 
     # -[] online = true
-    # -[] pid OK?
+    # -[] pid OK? (quitar 9999)
     # -[] debug_mode = false
     # - ETC...
 
@@ -60,7 +61,7 @@
 
     # TODO: automatico!
 
-  # 5) Copiar protocolo a protocols/ ----------------------------------------
+  # 5) Copiar protocols_DEV/ a protocols/ ----------------------------------------
 
     # TODO: automatico!
 
