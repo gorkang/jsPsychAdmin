@@ -37,7 +37,7 @@ clean_up_dev_protocol <- function(protocol_id, override_DEV_limitation = FALSE, 
         cli::cli_abort("[protocol_id = {protocol_id}] ABORTED: Nothing will be done")
       } else {
 
-        # Backup data files first? Only for non-dev protocols
+        # Backup data files first. Only for non-dev protocols
         if (backup_datafiles_first == TRUE) {
           OUTPUT_folder = paste0("outputs/BACKUPS/", Sys.Date(), "/")
           cli::cli_alert_info("Before deleting the data files, I will back them up in {OUTPUT_folder}{protocol_id}/{protocol_id}.zip")
@@ -73,6 +73,25 @@ clean_up_dev_protocol <- function(protocol_id, override_DEV_limitation = FALSE, 
   # Delete csv files in .data/
   # rstudioapi::navigateToFile(".vault/.credentials")
   DELETE_data_server(pid = protocol_id)
+
+
+  # 3) Delete files from SHARED-data ----------------------------------------
+
+  # Redundant with BACKUP above.
+  # TODO: Maybe we should delete the SHARED-data/pid/pid.zip here because it could keep the old pilot data (?)
+          # Not sure if we can delete valuable data... Be careful!
+
+    # Create backup
+    # Delete files from SHARED-data
+  # ZIP_file = paste0("../SHARED-data/", pid, "/", pid, ".zip")
+  #
+  # if (file.exists(ZIP_file)) {
+  #
+  #   ZIP_CS_file = paste0("../SHARED-data/BACKUP/", pid, "_", format(Sys.time(), "%Y-%m-%d_%H:%M:%S"), ".zip")
+  #
+  #   file.copy(from = ZIP_file, to = ZIP_CS_file)
+  # }
+
 
 
 }
