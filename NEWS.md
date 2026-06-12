@@ -2,8 +2,8 @@
 
 Minor updates
 
-* Fix issue in check_status_participants_protocol() when no assigned participants
-
+* Create a CS of the protocols folder to avoid data loss
+* Make sure dependencies install before cron-run
 
 # jsPsychAdmin 0.3.5.902
 
