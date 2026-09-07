@@ -6,9 +6,6 @@
 \usage{
 add_logo_text(plot, align = 0)
 }
-\arguments{
-\item{align}{}
-}
 \description{
 Add UAI CSCN logo to ggplots
 }

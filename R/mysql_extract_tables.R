@@ -9,8 +9,7 @@
 #' @examples
 extract_tables <- function(list_credentials = NULL, DB_credentials = NULL, serial_parallel = "serial") {
 
-  # source("admin/mysql_helper_functions.R")
-
+  # targets::tar_source()
   # Credentials
     # TODO: protect credentials!!!
     #sshpass:  -e            Password is passed as env-var "SSHPASS"

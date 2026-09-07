@@ -204,7 +204,9 @@ rename_jsPsych_canonical <- function(canonical_protocol_helper = "~/Downloads/js
 #' @export
 set_permissions_google_drive <- function(pid, email_IP) {
 
-  googledrive::drive_auth("gorkang@gmail.com")
+  options(gargle_oauth_email = "gorkang@gmail.com")
+  options(gargle_oauth_cache = "~/.secrets/gargle-oauth") # Ensure token is saved here
+  googledrive::drive_auth("gorkang@gmail.com", cache = "~/.secrets/gargle-oauth")
 
   ADMIN_emails = c("gorkang@gmail.com", "herman.valencia.13@sansano.usm.cl")
 

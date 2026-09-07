@@ -22,15 +22,21 @@ get_table_parallel <- function(table_name, DB_credentials) {
 
 
 
-openDBconnection <- function(DB_credentials, Driver = "MySQL ODBC 8.1 Unicode Driver") {
+openDBconnection <- function(DB_credentials, Driver = "MySQL ODBC 8.4 Unicode Driver") {
+  # Driver = "MySQL ODBC 9.7 Unicode Driver"
 
   drivers_available = odbc::odbcListDrivers()$name |> unique()
   Driver_DB_credentials = DB_credentials$value$Driver
 
   if (!Driver_DB_credentials %in% drivers_available) {
 
+    # Driver_available = drivers_available[1]
     cli::cli_alert_danger("{.code {Driver_DB_credentials}} not found in this computer, using {.code {Driver}} instead")
     Driver_DB_credentials = Driver
+
+    # cli::cli_alert_info("{.code {Driver_DB_credentials}} not found in this computer, using {.code {Driver_available}} instead")
+    # Driver_DB_credentials = Driver_available
+
 
   }
 

@@ -9,9 +9,6 @@ tasks_missing_docs(
   FOLDER = "~/gorkang@gmail.com/RESEARCH/PROYECTOS-Code/jsPsychR/SHARED-docs/docs"
 )
 }
-\arguments{
-\item{FOLDER}{}
-}
 \description{
 tasks_missing_docs
 Show list of tasks missing docs/

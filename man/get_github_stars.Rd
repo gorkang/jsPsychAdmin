@@ -6,9 +6,6 @@
 \usage{
 get_github_stars(repo, Renviron)
 }
-\arguments{
-\item{Renviron}{}
-}
 \description{
 Gets DF with who starred a Github project
 }

@@ -8,9 +8,6 @@ rename_jsPsych_canonical(
   canonical_protocol_helper = "~/Downloads/jsPsychR_canonical"
 )
 }
-\arguments{
-\item{canonical_protocol_helper}{}
-}
 \value{
 renamed files
 }
