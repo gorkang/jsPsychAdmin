@@ -1,5 +1,13 @@
-# Used in sync_data_active_protocols.R
+#' run_remote_HelpeR
+#'
+#' @param protocol
+#'
+#' @returns
+#' @export
+#'
+#' @examples
 run_remote_HelpeR <- function(protocol) {
+  # Used in sync_data_active_protocols.R
 
   cli::cli_h2(paste0("RUNNING jsPsychHelpeR", protocol, " (via callr)"))
 
